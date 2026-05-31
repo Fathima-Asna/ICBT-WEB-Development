@@ -30,7 +30,7 @@ public class LogoutServlet extends HttpServlet {
         }
 
         // Redirect to login page with a logout success indicator
-        response.sendRedirect(request.getContextPath() + "/login.jsp?logout=true");
+        response.sendRedirect(request.getContextPath() + "/login.html?logout=true");
     }
 
     /**

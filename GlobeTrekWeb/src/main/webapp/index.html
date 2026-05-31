@@ -1,27 +1,13 @@
-<%@ page contentType="text/html; charset=UTF-8" language="java" %>
-<%
-    // ── Read session for dynamic nav bar ──────────────────────────────────────
-    HttpSession sess = request.getSession(false);
-    String userRole  = (sess != null) ? (String) sess.getAttribute("userRole") : null;
-    String userName  = (sess != null) ? (String) sess.getAttribute("userFirstName") : null;
-    boolean loggedIn = (userRole != null);
-
-    // Determine dashboard link based on role
-    String dashboardLink = request.getContextPath() + "/login.jsp";
-    if ("Admin".equals(userRole))    dashboardLink = request.getContextPath() + "/admin-dashboard.jsp";
-    if ("Staff".equals(userRole))    dashboardLink = request.getContextPath() + "/staff/action";
-    if ("Customer".equals(userRole)) dashboardLink = request.getContextPath() + "/customer-dashboard.jsp";
-%>
 <!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta name="description" content="Discover extraordinary travel experiences with GlobeTrek Adventures. Premium tour packages, luxury accommodations, and custom handcrafted itineraries.">
-    <title>GlobeTrek Adventures | Premium Travel &amp; Tour Agency</title>
+    <title>GlobeTrek Adventures | Premium Travel & Tour Agency</title>
     
     <!-- Link to single comprehensive stylesheet -->
-    <link rel="stylesheet" href="<%= request.getContextPath() %>/style.css">
+    <link rel="stylesheet" href="style.css">
 </head>
 <body>
 
@@ -29,7 +15,7 @@
     <header>
         <div class="container header-container">
             <!-- Brand Identity -->
-            <a href="<%= request.getContextPath() %>/index.jsp" class="brand" id="brand-home-link">
+            <a href="index.html" class="brand" id="brand-home-link">
                 <!-- Premium SVG Compass Logo -->
                 <svg class="brand-logo-svg" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
                     <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm0 18c-4.41 0-8-3.59-8-8s3.59-8 8-8 8 3.59 8 8-3.59 8-8 8zm1-13h-2v4H7v2h4v4h2v-4h4v-2h-4V7z"/>
@@ -48,35 +34,24 @@
 
             <!-- Main Menu Links -->
             <ul class="nav-menu" id="navigation-links">
-                <li><a href="<%= request.getContextPath() %>/index.jsp" class="nav-link active" id="nav-home">Home</a></li>
-                <li><a href="<%= request.getContextPath() %>/packages.html" class="nav-link" id="nav-packages">Packages</a></li>
-                <li><a href="<%= request.getContextPath() %>/accommodations.html" class="nav-link" id="nav-stays">Stays</a></li>
-                <li><a href="<%= request.getContextPath() %>/contact.html" class="nav-link" id="nav-contact">Contact</a></li>
-                <!-- Mobile Only Buttons -->
-                <% if (!loggedIn) { %>
-                <li class="mobile-only-link" style="display: none;"><a href="<%= request.getContextPath() %>/login.jsp" class="nav-link">Login</a></li>
-                <li class="mobile-only-link" style="display: none;"><a href="<%= request.getContextPath() %>/signup.jsp" class="nav-link">Sign Up</a></li>
-                <% } %>
+                <li><a href="index.html" class="nav-link active" id="nav-home">Home</a></li>
+                <li><a href="packages.html" class="nav-link" id="nav-packages">Packages</a></li>
+                <li><a href="accommodations.html" class="nav-link" id="nav-stays">Stays</a></li>
+                <li><a href="contact.html" class="nav-link" id="nav-contact">Contact</a></li>
+                <!-- Mobile Only Buttons (styled via CSS media queries inside drawer) -->
+                <li class="mobile-only-link" style="display: none;"><a href="login.html" class="nav-link">Login</a></li>
+                <li class="mobile-only-link" style="display: none;"><a href="signup.html" class="nav-link">Sign Up</a></li>
             </ul>
 
-            <!-- Call to Actions: Dynamic based on session -->
+            <!-- Call to Actions -->
             <div class="nav-cta" id="header-cta-buttons">
-                <% if (loggedIn) { %>
-                    <!-- Logged-in: show dashboard link + logout -->
-                    <a href="<%= dashboardLink %>" class="btn btn-outline" style="padding: 10px 22px; font-size: 0.85rem;" id="cta-dashboard">
-                        My Dashboard
-                    </a>
-                    <a href="<%= request.getContextPath() %>/logout" class="btn btn-primary" style="padding: 10px 22px; font-size: 0.85rem;" id="cta-logout">Sign Out</a>
-                <% } else { %>
-                    <!-- Guest: show login + signup -->
-                    <a href="<%= request.getContextPath() %>/login.jsp" class="btn btn-outline" style="padding: 10px 22px; font-size: 0.85rem;" id="cta-login">Login</a>
-                    <a href="<%= request.getContextPath() %>/signup.jsp" class="btn btn-primary" style="padding: 10px 22px; font-size: 0.85rem;" id="cta-signup">Sign Up</a>
-                <% } %>
+                <a href="login.html" class="btn btn-outline" style="padding: 10px 22px; font-size: 0.85rem;" id="cta-login">Login</a>
+                <a href="signup.html" class="btn btn-primary" style="padding: 10px 22px; font-size: 0.85rem;" id="cta-signup">Sign Up</a>
             </div>
         </div>
     </header>
 
-    <!-- --- HERO SECTION --- -->
+    <!-- --- HERO HERO SECTION --- -->
     <main>
         <section class="hero" id="hero-section">
             <div class="container">
@@ -84,8 +59,8 @@
                     <h1>Wander Often.<br>Explore Always.</h1>
                     <p>Handcrafting ultra-luxury, high-adventure itineraries for the curious traveler. Step off the beaten path and into the extraordinary.</p>
                     <div class="hero-buttons">
-                        <a href="<%= request.getContextPath() %>/packages.html" class="btn btn-primary" id="hero-explore-btn">Explore Packages</a>
-                        <a href="<%= request.getContextPath() %>/contact.html" class="btn btn-secondary" id="hero-contact-btn">Tailor Your Trip</a>
+                        <a href="packages.html" class="btn btn-primary" id="hero-explore-btn">Explore Packages</a>
+                        <a href="contact.html" class="btn btn-secondary" id="hero-contact-btn">Tailor Your Trip</a>
                     </div>
                 </div>
             </div>
@@ -137,10 +112,10 @@
         <section class="section-padding" style="background-color: var(--white);" id="packages-preview">
             <div class="container text-center">
                 <h2 class="decorated decorated-center mb-50">Handcrafted Travel Experiences</h2>
-                <p style="max-width: 700px; margin: 0 auto 40px auto; font-size: 1.15rem; opacity: 0.85;">From snow-capped mountain hikes in Switzerland to private lagoon retreats in Bali, we design journeys that move you.</p>
+                <p style="max-width: 700px; margin: 0 auto 40px auto; font-size: 1.15rem; opacity: 0.85;">From snow-capped mountain hikes in Switzerland to private lagoon retreats in Bali, we design journeys that move you. Visit our dedicated portals below to view detailed pricing and active scheduling.</p>
                 <div class="hero-buttons" style="justify-content: center; gap: 30px;">
-                    <a href="<%= request.getContextPath() %>/packages.html" class="btn btn-primary" id="home-view-packages-btn">Browse Tour Packages</a>
-                    <a href="<%= request.getContextPath() %>/accommodations.html" class="btn btn-outline" id="home-view-stays-btn">Explore Curated Stays</a>
+                    <a href="packages.html" class="btn btn-primary" id="home-view-packages-btn">Browse Tour Packages</a>
+                    <a href="accommodations.html" class="btn btn-outline" id="home-view-stays-btn">Explore Curated Stays</a>
                 </div>
             </div>
         </section>
@@ -151,7 +126,7 @@
                 <div class="newsletter-banner" id="newsletter-form-container">
                     <h2>Join the Wanderlust Circle</h2>
                     <p>Subscribe to receive curated secret trails, seasonal flight sales, and architectural stay recommendations directly in your inbox. No spam, ever.</p>
-                    <form action="<%= request.getContextPath() %>/contact.html" method="POST" class="footer-newsletter-form" style="max-width: 500px; margin: 0 auto;">
+                    <form action="contact.html" method="POST" class="footer-newsletter-form" style="max-width: 500px; margin: 0 auto;">
                         <input type="email" placeholder="Enter your email address" class="footer-newsletter-input" required aria-label="Email Address for newsletter">
                         <button type="submit" class="footer-newsletter-btn" id="newsletter-submit">Subscribe</button>
                     </form>
@@ -185,10 +160,10 @@
                 <div class="footer-col" id="footer-destinations">
                     <h4>Destinations</h4>
                     <ul class="footer-links">
-                        <li><a href="<%= request.getContextPath() %>/packages.html">Swiss Alps Peaks</a></li>
-                        <li><a href="<%= request.getContextPath() %>/packages.html">Bali &amp; Gili Islands</a></li>
-                        <li><a href="<%= request.getContextPath() %>/packages.html">Ancient Kyoto</a></li>
-                        <li><a href="<%= request.getContextPath() %>/packages.html">Patagonia Expeditions</a></li>
+                        <li><a href="packages.html">Swiss Alps Peaks</a></li>
+                        <li><a href="packages.html">Bali & Gili Islands</a></li>
+                        <li><a href="packages.html">Ancient Kyoto</a></li>
+                        <li><a href="packages.html">Patagonia Expeditions</a></li>
                     </ul>
                 </div>
 
@@ -196,10 +171,10 @@
                 <div class="footer-col" id="footer-company">
                     <h4>GlobeTrek Info</h4>
                     <ul class="footer-links">
-                        <li><a href="<%= request.getContextPath() %>/index.jsp#why-choose-us">About Our Mission</a></li>
-                        <li><a href="<%= request.getContextPath() %>/contact.html">Contact Support</a></li>
-                        <li><a href="<%= request.getContextPath() %>/signup.jsp">Join Travel Club</a></li>
-                        <li><a href="<%= request.getContextPath() %>/login.jsp">Agency Login</a></li>
+                        <li><a href="index.html#why-choose-us">About Our Mission</a></li>
+                        <li><a href="contact.html">Contact Support</a></li>
+                        <li><a href="signup.html">Join Travel Club</a></li>
+                        <li><a href="login.html">Agency Login</a></li>
                     </ul>
                 </div>
 
@@ -207,7 +182,7 @@
                 <div class="footer-col" id="footer-newsletter">
                     <h4>Newsletter</h4>
                     <p>Get exclusive monthly escape itineraries, seasonal packages, and off-grid insights.</p>
-                    <form action="<%= request.getContextPath() %>/contact.html" method="POST" class="footer-newsletter-form">
+                    <form action="contact.html" method="POST" class="footer-newsletter-form">
                         <input type="email" placeholder="Join our circle" class="footer-newsletter-input" required aria-label="Email address for subscription">
                         <button type="submit" class="footer-newsletter-btn" aria-label="Submit newsletter">
                             <svg viewBox="0 0 24 24" style="width: 16px; height: 16px; fill: var(--white);"><path d="M2.01 21L23 12 2.01 3 2 10l15 2-15 2z"/></svg>
@@ -222,9 +197,9 @@
                     &copy; 2026 GlobeTrek Adventures Ltd. All rights reserved. Made with absolute care by Expert UI/UX.
                 </div>
                 <ul class="footer-policies">
-                    <li><a href="<%= request.getContextPath() %>/index.jsp#why-choose-us">Privacy Policy</a></li>
-                    <li><a href="<%= request.getContextPath() %>/index.jsp#why-choose-us">Terms of Service</a></li>
-                    <li><a href="<%= request.getContextPath() %>/index.jsp#why-choose-us">Sitemap</a></li>
+                    <li><a href="index.html#why-choose-us">Privacy Policy</a></li>
+                    <li><a href="index.html#why-choose-us">Terms of Service</a></li>
+                    <li><a href="index.html#why-choose-us">Sitemap</a></li>
                 </ul>
             </div>
         </div>

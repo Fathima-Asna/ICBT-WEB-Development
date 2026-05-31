@@ -1,36 +1,30 @@
 package com.globetrek.servlet;
 
+import com.globetrek.util.DBConnection;
+
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
-import java.io.*;
-import java.nio.charset.StandardCharsets;
-import java.text.SimpleDateFormat;
-import java.util.Date;
-import java.util.UUID;
+import java.io.IOException;
+import java.sql.*;
 
 /**
  * BookingServlet — Processes travel package booking requests submitted by Customers.
  *
- * Mapped to: /book  (POST only)
+ * Mapped to: /book (POST only)
  *
  * Workflow:
  *   1. Reads the logged-in customer's email from the active HttpSession.
  *   2. Validates all booking form fields.
- *   3. Generates a unique booking ID.
- *   4. Appends a new record to WEB-INF/data/bookings.txt.
- *   5. Redirects back to customer-dashboard.jsp with a success or error parameter.
- *
- * Data format (bookings.txt):
- *   bookingId|customerEmail|packageName|destination|travelDate|travelers|specialNotes|status|submittedAt
+ *   3. Queries MySQL to find the customer's user_id.
+ *   4. Queries MySQL to find the package_id (by name or destination).
+ *      If not found, inserts the package dynamically to keep data consistent.
+ *   5. Inserts the booking record into the bookings table in MySQL.
+ *   6. Redirects back to Customer Dashboard with a success parameter.
  */
 public class BookingServlet extends HttpServlet {
-
-    private static final String BOOKINGS_FILE = "bookings.txt";
-    private static final String SEPARATOR     = "|";
-    private static final String STATUS_PENDING = "Pending";
 
     @Override
     protected void doPost(HttpServletRequest request, HttpServletResponse response)
@@ -41,7 +35,7 @@ public class BookingServlet extends HttpServlet {
         // ── Verify session ────────────────────────────────────────────────────
         HttpSession session = request.getSession(false);
         if (session == null || session.getAttribute("userEmail") == null) {
-            response.sendRedirect(request.getContextPath() + "/login.jsp?error=session_expired");
+            response.sendRedirect(request.getContextPath() + "/login.html?error=session_expired");
             return;
         }
 
@@ -56,7 +50,7 @@ public class BookingServlet extends HttpServlet {
 
         // ── Server-side validation ────────────────────────────────────────────
         if (packageName.isEmpty() || destination.isEmpty() || travelDate.isEmpty() || travelersStr.isEmpty()) {
-            response.sendRedirect(request.getContextPath() + "/customer-dashboard.jsp?error=missing_fields");
+            response.sendRedirect(request.getContextPath() + "/customer/dashboard?error=missing_fields");
             return;
         }
 
@@ -65,52 +59,114 @@ public class BookingServlet extends HttpServlet {
             travelers = Integer.parseInt(travelersStr);
             if (travelers < 1 || travelers > 50) throw new NumberFormatException();
         } catch (NumberFormatException e) {
-            response.sendRedirect(request.getContextPath() + "/customer-dashboard.jsp?error=invalid_travelers");
+            response.sendRedirect(request.getContextPath() + "/customer/dashboard?error=invalid_travelers");
             return;
         }
 
-        // Sanitize notes — replace pipe chars to prevent file corruption
-        specialNotes = specialNotes.replace(SEPARATOR, "-");
-        packageName  = packageName.replace(SEPARATOR, "-");
-        destination  = destination.replace(SEPARATOR, "-");
+        Connection conn = null;
+        PreparedStatement psUser = null;
+        PreparedStatement psPkgSelect = null;
+        PreparedStatement psPkgInsert = null;
+        PreparedStatement psBook = null;
+        ResultSet rsUser = null;
+        ResultSet rsPkg = null;
 
-        // ── Generate unique booking ID ────────────────────────────────────────
-        String bookingId   = "GT-" + UUID.randomUUID().toString().substring(0, 8).toUpperCase();
-        String submittedAt = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").format(new Date());
+        try {
+            conn = DBConnection.getConnection();
+            conn.setAutoCommit(false); // Transaction
 
-        // ── Build the record line ─────────────────────────────────────────────
-        String record = String.join(SEPARATOR,
-            bookingId,
-            customerEmail,
-            packageName,
-            destination,
-            travelDate,
-            String.valueOf(travelers),
-            specialNotes.isEmpty() ? "None" : specialNotes,
-            STATUS_PENDING,
-            submittedAt
-        );
+            // ── 1. Find User ID by Email ──────────────────────────────────────
+            String userSQL = "SELECT id FROM users WHERE email = ?";
+            psUser = conn.prepareStatement(userSQL);
+            psUser.setString(1, customerEmail);
+            rsUser = psUser.executeQuery();
 
-        // ── Append to bookings.txt ────────────────────────────────────────────
-        appendToFile(record);
+            if (!rsUser.next()) {
+                conn.rollback();
+                response.sendRedirect(request.getContextPath() + "/login.html?error=unauthorized");
+                return;
+            }
+            int userId = rsUser.getInt("id");
 
-        // ── Redirect with success ─────────────────────────────────────────────
-        response.sendRedirect(request.getContextPath() + "/customer-dashboard.jsp?success=booked&id=" + bookingId);
-    }
+            // ── 2. Find Package ID (Check Name first, then Destination) ──────
+            int packageId = -1;
+            String pkgSQL = "SELECT id FROM packages WHERE name = ? OR destination = ?";
+            psPkgSelect = conn.prepareStatement(pkgSQL);
+            psPkgSelect.setString(1, packageName);
+            psPkgSelect.setString(2, destination);
+            rsPkg = psPkgSelect.executeQuery();
 
-    /**
-     * Appends a line to the bookings file (creates file + directories if absent).
-     */
-    private void appendToFile(String line) throws IOException {
-        String dataDir = getServletContext().getRealPath("/WEB-INF/data/");
-        File dir = new File(dataDir);
-        if (!dir.exists()) dir.mkdirs();
+            if (rsPkg.next()) {
+                packageId = rsPkg.getInt("id");
+            } else {
+                // If the package is not found in the DB (like Patagonia Expedition),
+                // insert it dynamically to keep referential integrity!
+                String insertPkgSQL = "INSERT INTO packages (name, destination, price, description) VALUES (?, ?, ?, ?)";
+                psPkgInsert = conn.prepareStatement(insertPkgSQL, Statement.RETURN_GENERATED_KEYS);
+                psPkgInsert.setString(1, packageName);
+                psPkgInsert.setString(2, destination);
+                // Assign a default reasonable price (e.g. $2999) or based on name
+                double price = 2999.00;
+                if (packageName.toLowerCase().contains("patagonia")) {
+                    price = 4199.00;
+                } else if (packageName.toLowerCase().contains("swiss")) {
+                    price = 3299.00;
+                } else if (packageName.toLowerCase().contains("bali")) {
+                    price = 2499.00;
+                } else if (packageName.toLowerCase().contains("kyoto")) {
+                    price = 2899.00;
+                }
+                psPkgInsert.setDouble(3, price);
+                psPkgInsert.setString(4, specialNotes.isEmpty() ? "Custom travel booking." : specialNotes);
+                psPkgInsert.executeUpdate();
 
-        File file = new File(dir, BOOKINGS_FILE);
-        try (BufferedWriter bw = new BufferedWriter(
-                new OutputStreamWriter(new FileOutputStream(file, true), StandardCharsets.UTF_8))) {
-            bw.write(line);
-            bw.newLine();
+                try (ResultSet generatedKeys = psPkgInsert.getGeneratedKeys()) {
+                    if (generatedKeys.next()) {
+                        packageId = generatedKeys.getInt(1);
+                    } else {
+                        throw new SQLException("Creating package failed, no ID obtained.");
+                    }
+                }
+            }
+
+            // ── 3. Insert Booking ─────────────────────────────────────────────
+            // Note: Since our schema only has (user_id, package_id, status)
+            // we will insert these. Booking date is auto-timestamped.
+            String bookInsertSQL = "INSERT INTO bookings (user_id, package_id, status) VALUES (?, ?, 'Pending')";
+            psBook = conn.prepareStatement(bookInsertSQL, Statement.RETURN_GENERATED_KEYS);
+            psBook.setInt(1, userId);
+            psBook.setInt(2, packageId);
+            psBook.executeUpdate();
+
+            int bookingDbId = -1;
+            try (ResultSet generatedKeys = psBook.getGeneratedKeys()) {
+                if (generatedKeys.next()) {
+                    bookingDbId = generatedKeys.getInt(1);
+                }
+            }
+
+            conn.commit(); // Commit Transaction
+
+            // Format a nice booking reference string (e.g., GT-0104)
+            String bookingRef = (bookingDbId != -1) ? String.format("GT-%04d", bookingDbId) : "GT-SUCCESS";
+
+            // ── Redirect with success ─────────────────────────────────────────
+            response.sendRedirect(request.getContextPath() + "/customer/dashboard?success=booked&id=" + bookingRef);
+
+        } catch (Exception e) {
+            if (conn != null) {
+                try { conn.rollback(); } catch (SQLException ignored) {}
+            }
+            e.printStackTrace();
+            response.sendRedirect(request.getContextPath() + "/customer/dashboard?error=db_error");
+        } finally {
+            try { if (rsUser != null) rsUser.close(); } catch (SQLException ignored) {}
+            try { if (rsPkg != null) rsPkg.close(); } catch (SQLException ignored) {}
+            try { if (psUser != null) psUser.close(); } catch (SQLException ignored) {}
+            try { if (psPkgSelect != null) psPkgSelect.close(); } catch (SQLException ignored) {}
+            try { if (psPkgInsert != null) psPkgInsert.close(); } catch (SQLException ignored) {}
+            try { if (psBook != null) psBook.close(); } catch (SQLException ignored) {}
+            try { if (conn != null) { conn.setAutoCommit(true); conn.close(); } } catch (SQLException ignored) {}
         }
     }
 

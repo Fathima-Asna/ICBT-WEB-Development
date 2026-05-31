@@ -1,28 +1,3 @@
-<%@ page contentType="text/html; charset=UTF-8" language="java" %>
-<%
-    // ── Session Guard: already logged in? Send to their dashboard ────────────
-    HttpSession existingSession = request.getSession(false);
-    if (existingSession != null && existingSession.getAttribute("userRole") != null) {
-        String role = (String) existingSession.getAttribute("userRole");
-        if ("Admin".equals(role))    { response.sendRedirect(request.getContextPath() + "/admin-dashboard.jsp"); return; }
-        if ("Staff".equals(role))    { response.sendRedirect(request.getContextPath() + "/staff/action"); return; }
-        if ("Customer".equals(role)) { response.sendRedirect(request.getContextPath() + "/customer-dashboard.jsp"); return; }
-    }
-
-    // ── Retrieve server-side error or status messages ─────────────────────────
-    String errorMsg    = (String) request.getAttribute("errorMsg");
-    String logoutParam = request.getParameter("logout");
-    String errorParam  = request.getParameter("error");
-
-    // Map error query params to human-readable messages
-    if (errorMsg == null && errorParam != null) {
-        switch (errorParam) {
-            case "unauthorized":    errorMsg = "Please log in to access that page."; break;
-            case "forbidden":       errorMsg = "You do not have permission to view that page."; break;
-            case "session_expired": errorMsg = "Your session has expired. Please sign in again."; break;
-        }
-    }
-%>
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -32,7 +7,7 @@
     <title>Welcome Back | GlobeTrek Adventures Login</title>
     
     <!-- Link to single comprehensive stylesheet -->
-    <link rel="stylesheet" href="<%= request.getContextPath() %>/style.css">
+    <link rel="stylesheet" href="style.css">
 </head>
 <body>
 
@@ -40,7 +15,7 @@
     <header>
         <div class="container header-container">
             <!-- Brand Identity -->
-            <a href="<%= request.getContextPath() %>/index.jsp" class="brand" id="brand-home-link">
+            <a href="index.html" class="brand" id="brand-home-link">
                 <!-- Premium SVG Compass Logo -->
                 <svg class="brand-logo-svg" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
                     <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm0 18c-4.41 0-8-3.59-8-8s3.59-8 8-8 8 3.59 8 8-3.59 8-8 8zm1-13h-2v4H7v2h4v4h2v-4h4v-2h-4V7z"/>
@@ -59,16 +34,16 @@
 
             <!-- Main Menu Links -->
             <ul class="nav-menu" id="navigation-links">
-                <li><a href="<%= request.getContextPath() %>/index.jsp" class="nav-link" id="nav-home">Home</a></li>
-                <li><a href="<%= request.getContextPath() %>/packages.html" class="nav-link" id="nav-packages">Packages</a></li>
-                <li><a href="<%= request.getContextPath() %>/accommodations.html" class="nav-link" id="nav-stays">Stays</a></li>
-                <li><a href="<%= request.getContextPath() %>/contact.html" class="nav-link" id="nav-contact">Contact</a></li>
+                <li><a href="index.html" class="nav-link" id="nav-home">Home</a></li>
+                <li><a href="packages.html" class="nav-link" id="nav-packages">Packages</a></li>
+                <li><a href="accommodations.html" class="nav-link" id="nav-stays">Stays</a></li>
+                <li><a href="contact.html" class="nav-link" id="nav-contact">Contact</a></li>
             </ul>
 
             <!-- Call to Actions -->
             <div class="nav-cta" id="header-cta-buttons">
-                <a href="<%= request.getContextPath() %>/login.jsp" class="btn btn-outline" style="padding: 10px 22px; font-size: 0.85rem; border-color: var(--secondary); color: var(--secondary);" id="cta-login">Login</a>
-                <a href="<%= request.getContextPath() %>/signup.jsp" class="btn btn-primary" style="padding: 10px 22px; font-size: 0.85rem;" id="cta-signup">Sign Up</a>
+                <a href="login.html" class="btn btn-outline" style="padding: 10px 22px; font-size: 0.85rem; border-color: var(--secondary); color: var(--secondary);" id="cta-login">Login</a>
+                <a href="signup.html" class="btn btn-primary" style="padding: 10px 22px; font-size: 0.85rem;" id="cta-signup">Sign Up</a>
             </div>
         </div>
     </header>
@@ -81,28 +56,12 @@
             <div class="form-side" id="login-form-container">
                 <div class="form-header">
                     <h1>Welcome Back, Traveler</h1>
-                    <p>New to GlobeTrek? <a href="<%= request.getContextPath() %>/signup.jsp" id="link-to-signup">Create an account</a> to join our wanderlust circle.</p>
+                    <p>New to GlobeTrek? <a href="signup.html" id="link-to-signup">Create an account</a> to join our wanderlust circle.</p>
                 </div>
+                <!-- ERROR_BANNER -->
 
-                <%-- ── Logout success banner ──────────────────────────────────── --%>
-                <% if ("true".equals(logoutParam)) { %>
-                <div class="auth-banner auth-banner--success" id="logout-success-banner" role="alert">
-                    <svg viewBox="0 0 24 24"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-2 15l-5-5 1.41-1.41L10 14.17l7.59-7.59L19 8l-9 9z"/></svg>
-                    You have been successfully signed out. See you next adventure!
-                </div>
-                <% } %>
-
-                <%-- ── Error banner ────────────────────────────────────────────── --%>
-                <% if (errorMsg != null && !errorMsg.isEmpty()) { %>
-                <div class="auth-banner auth-banner--error" id="login-error-banner" role="alert">
-                    <svg viewBox="0 0 24 24"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm1 15h-2v-2h2v2zm0-4h-2V7h2v6z"/></svg>
-                    <%= errorMsg %>
-                </div>
-                <% } %>
-
-                <!-- Structured Standard Form connected to AuthServlet -->
-                <form action="<%= request.getContextPath() %>/auth" method="POST" autocomplete="on" id="login-form">
-                    <!-- Hidden action discriminator -->
+                <!-- Structured Standard Form ready for Backend Connection -->
+                <form action="auth" method="POST" autocomplete="on">
                     <input type="hidden" name="action" value="login">
                     
                     <!-- Email Field -->
@@ -129,7 +88,7 @@
                             <input type="checkbox" name="remember_me">
                             <span class="checkmark"></span>
                         </label>
-                        <a href="<%= request.getContextPath() %>/contact.html" class="forgot-link" id="link-forgot-password">Forgot Password?</a>
+                        <a href="contact.html" class="forgot-link" id="link-forgot-password">Forgot Password?</a>
                     </div>
 
                     <!-- Submit Button -->
@@ -173,10 +132,10 @@
                 <div class="footer-col" id="footer-destinations">
                     <h4>Destinations</h4>
                     <ul class="footer-links">
-                        <li><a href="<%= request.getContextPath() %>/packages.html">Swiss Alps Peaks</a></li>
-                        <li><a href="<%= request.getContextPath() %>/packages.html">Bali &amp; Gili Islands</a></li>
-                        <li><a href="<%= request.getContextPath() %>/packages.html">Ancient Kyoto</a></li>
-                        <li><a href="<%= request.getContextPath() %>/packages.html">Patagonia Expeditions</a></li>
+                        <li><a href="packages.html">Swiss Alps Peaks</a></li>
+                        <li><a href="packages.html">Bali & Gili Islands</a></li>
+                        <li><a href="packages.html">Ancient Kyoto</a></li>
+                        <li><a href="packages.html">Patagonia Expeditions</a></li>
                     </ul>
                 </div>
 
@@ -184,10 +143,10 @@
                 <div class="footer-col" id="footer-company">
                     <h4>GlobeTrek Info</h4>
                     <ul class="footer-links">
-                        <li><a href="<%= request.getContextPath() %>/index.jsp#why-choose-us">About Our Mission</a></li>
-                        <li><a href="<%= request.getContextPath() %>/contact.html">Contact Support</a></li>
-                        <li><a href="<%= request.getContextPath() %>/signup.jsp">Join Travel Club</a></li>
-                        <li><a href="<%= request.getContextPath() %>/login.jsp">Agency Login</a></li>
+                        <li><a href="index.html#why-choose-us">About Our Mission</a></li>
+                        <li><a href="contact.html">Contact Support</a></li>
+                        <li><a href="signup.html">Join Travel Club</a></li>
+                        <li><a href="login.html">Agency Login</a></li>
                     </ul>
                 </div>
 
@@ -195,7 +154,7 @@
                 <div class="footer-col" id="footer-newsletter">
                     <h4>Newsletter</h4>
                     <p>Get exclusive monthly escape itineraries, seasonal packages, and off-grid insights.</p>
-                    <form action="<%= request.getContextPath() %>/contact.html" method="POST" class="footer-newsletter-form">
+                    <form action="contact.html" method="POST" class="footer-newsletter-form">
                         <input type="email" placeholder="Join our circle" class="footer-newsletter-input" required aria-label="Email address for subscription">
                         <button type="submit" class="footer-newsletter-btn" aria-label="Submit newsletter">
                             <svg viewBox="0 0 24 24" style="width: 16px; height: 16px; fill: var(--white);"><path d="M2.01 21L23 12 2.01 3 2 10l15 2-15 2z"/></svg>
@@ -207,12 +166,12 @@
             <!-- Footer Bottom -->
             <div class="footer-bottom">
                 <div class="footer-copyright">
-                    &copy; 2026 GlobeTrek Adventures Ltd. All rights reserved.
+                    &copy; 2026 GlobeTrek Adventures Ltd. All rights reserved. Made with absolute care by Expert UI/UX.
                 </div>
                 <ul class="footer-policies">
-                    <li><a href="<%= request.getContextPath() %>/index.jsp">Privacy Policy</a></li>
-                    <li><a href="<%= request.getContextPath() %>/index.jsp">Terms of Service</a></li>
-                    <li><a href="<%= request.getContextPath() %>/index.jsp">Sitemap</a></li>
+                    <li><a href="index.html">Privacy Policy</a></li>
+                    <li><a href="index.html">Terms of Service</a></li>
+                    <li><a href="index.html">Sitemap</a></li>
                 </ul>
             </div>
         </div>

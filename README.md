@@ -1,22 +1,21 @@
 # 🌍 GlobeTrek Adventures — ICBT Web Development Project
 
 > **A premium Travel & Tourism web application built for the ICBT Web Development module.**  
-> Two-phase architecture: **Phase 1** — Static HTML/CSS Frontend | **Phase 2** — Dynamic Java Servlet + JSP Backend
+> Built with a **100% JSP-Free Architecture**: Dynamic, database-driven server-side rendering using **Pure HTML/CSS on the Frontend** and **Strict Java Servlets, JDBC, and SQL on the Backend**.
 
 ---
 
 ## 📑 Table of Contents
 
 - [Project Overview](#-project-overview)
-- [Architecture](#-architecture)
-- [Phase 1 — Static Frontend (HTML + CSS)](#-phase-1--static-frontend-html--css)
-- [Phase 2 — Dynamic Backend (Java EE)](#-phase-2--dynamic-backend-java-ee)
+- [System Architecture](#-system-architecture)
+- [Template Rendering Engine](#-template-rendering-engine)
+- [Database Schema & Seed Data](#-database-schema--seed-data)
 - [Folder Structure](#-folder-structure)
 - [Technology Stack](#-technology-stack)
-- [How to Run](#-how-to-run)
-- [Default Login Credentials](#-default-login-credentials)
 - [Features Summary](#-features-summary)
-- [Screenshots & Pages](#-screenshots--pages)
+- [Default Login Credentials](#-default-login-credentials)
+- [Deployment & How to Run](#-deployment--how-to-run)
 - [Design Highlights](#-design-highlights)
 - [Author](#-author)
 
@@ -24,18 +23,18 @@
 
 ## 🎯 Project Overview
 
-**GlobeTrek Adventures** is a fictional premium travel and tourism agency website. The project demonstrates a full-stack web development workflow from designing a pixel-perfect static frontend to building a fully functional dynamic backend with authentication, role-based dashboards, booking management, and flat-file data persistence.
+**GlobeTrek Adventures** is a fictional premium travel and tourism agency website designed to deliver a modern, interactive booking experience. 
 
-The project is divided into **two phases**:
-
-| Phase | Description | Technologies |
-|-------|-------------|-------------|
-| **Phase 1** | Static multi-page website with premium UI/UX | HTML5, CSS3 (no JavaScript, no frameworks) |
-| **Phase 2** | Dynamic backend with authentication, RBAC, CRUD | Java Servlets, JSP, JSTL, Maven, Tomcat |
+Moving away from legacy JSP page structures and heavy client-side JavaScript frameworks, this project employs a professional, secure **server-side template injection pattern**:
+1. The **Frontend** consists of pure static `.html` and `.css` pages optimized for visual excellence, performance, and SEO.
+2. The **Backend** is built entirely with **Java EE Servlets** and **standard JDBC** connecting to a remote **TiDB Serverless MySQL database**.
+3. Dynamic database data (such as user profiles, travel packages, and responsive booking grids) is injected directly into static HTML layouts on the fly using a robust Java utility (`TemplateRenderer.java`) before writing standard responses to the browser.
 
 ---
 
-## 🏗 Architecture
+## 🏗 System Architecture
+
+The following diagram illustrates how the components interact in our JSP-free stack:
 
 ```
 ┌──────────────────────────────────────────────────────────────┐
@@ -43,16 +42,17 @@ The project is divided into **two phases**:
 │  ┌──────────┐ ┌──────────┐ ┌──────────┐ ┌──────────────────┐│
 │  │index.html│ │login.html│ │signup.html│ │packages/accom/...││
 │  └──────────┘ └──────────┘ └──────────┘ └──────────────────┘│
-│            Static HTML + CSS (Phase 1)                       │
+│            Static Premium HTML + CSS                         │
 └──────────────────────────────────────────────────────────────┘
                            │
+                           │ HTTP GET/POST (Forms / JSON)
                     ┌──────▼──────┐
                     │  Apache     │
                     │  Tomcat 9   │
                     └──────┬──────┘
                            │
 ┌──────────────────────────▼───────────────────────────────────┐
-│               GlobeTrekWeb (Phase 2 — WAR)                   │
+│               GlobeTrekWeb (WAR Deployment)                  │
 │                                                              │
 │  ┌──────────────────────────────────────────────────────────┐│
 │  │ FILTERS           │ SERVLETS                             ││
@@ -60,289 +60,250 @@ The project is divided into **two phases**:
 │  │ │  AuthFilter    │ │ │ AuthServlet  │ │ BookingServlet │ ││
 │  │ │ (RBAC Guard)  │ │ │ /auth        │ │ /book          │ ││
 │  │ └───────────────┘ │ ├──────────────┤ ├────────────────┤ ││
-│  │                   │ │ AdminServlet │ │ LogoutServlet  │ ││
-│  │                   │ │ /admin/action│ │ /logout        │ ││
+│  │                   │ │ AdminServlet │ │ IndexServlet   │ ││
+│  │                   │ │ /admin/action│ │ /index.html    │ ││
+│  │                   │ ├──────────────┤ ├────────────────┤ ││
+│  │                   │ │ StaffServlet │ │ LoginServlet   │ ││
+│  │                   │ │ /staff/action│ │ /login.html    │ ││
 │  │                   │ └──────────────┘ └────────────────┘ ││
+│  │                   │                                      ││
+│  │                   │      TemplateRenderer.java           ││
+│  │                   │ (Reads static HTML & injects SQL data)││
+│  └───────────────────┴──────────────────────────────────────┘│
+│                                                              │
+│  ┌──────────────────────────────────────────────────────────┐│
+│  │ HTML TEMPLATES (Pure static template assets)             ││
+│  │ login.html · signup.html · index.html                    ││
+│  │ customer-dashboard.html · staff-dashboard.html            ││
+│  │ admin-dashboard.html · packages.html                      ││
 │  └──────────────────────────────────────────────────────────┘│
 │                                                              │
 │  ┌──────────────────────────────────────────────────────────┐│
-│  │ JSP VIEWS                                                ││
-│  │ login.jsp · signup.jsp · index.jsp                       ││
-│  │ customer-dashboard.jsp · staff-dashboard.jsp             ││
-│  │ admin-dashboard.jsp                                      ││
-│  └──────────────────────────────────────────────────────────┘│
-│                                                              │
-│  ┌──────────────────────────────────────────────────────────┐│
-│  │ DATA LAYER (Flat-File I/O — No Database)                 ││
-│  │ WEB-INF/data/users.txt                                   ││
-│  │ WEB-INF/data/bookings.txt                                ││
-│  └──────────────────────────────────────────────────────────┘│
+│  │ DATABASE LAYER (Standard JDBC Connection)                ││
+│  │ DBConnection.java ──► MySQL JDBC Driver                   ││
+│  │       │                                                  ││
+│  └───────┼──────────────────────────────────────────────────┘│
+└──────────┼───────────────────────────────────────────────────┘
+           │ (Remote TCP Port 4000)
+┌──────────▼───────────────────────────────────────────────────┐
+│              TiDB Serverless Remote Database                 │
+│              Schema: globetrek_db                            │
+│              Tables: users, bookings, packages               │
 └──────────────────────────────────────────────────────────────┘
 ```
 
 ---
 
-## 🎨 Phase 1 — Static Frontend (HTML + CSS)
+## ⚡ Template Rendering Engine
 
-> **Pure HTML5 + CSS3 — Zero JavaScript, Zero CSS Frameworks**
+At the core of the dynamic application is [TemplateRenderer.java](file:///c:/Users/mmhus/OneDrive/Desktop/html_asna/GlobeTrekWeb/src/main/java/com/globetrek/util/TemplateRenderer.java). Instead of compiling heavy JSPs, the Java Servlets load beautiful static templates as standard `String` structures and perform real-time replacements:
 
-### Pages
+```java
+// Example: Dynamically inject active customer variables into the static layout
+String html = TemplateRenderer.render(getServletContext(), "/customer-dashboard.html");
+html = html.replace("{{userFirstName}}", user.getFullName());
+html = html.replace("{{bookingsTable}}", generatedTableHtml);
+response.getWriter().write(html);
+```
 
-| Page | File | Description |
-|------|------|-------------|
-| **Homepage** | `index.html` | Hero banner, company profile (Why Choose Us), featured adventures preview, newsletter CTA |
-| **Tour Packages** | `packages.html` | 3 curated packages (Swiss Alps, Bali, Kyoto) with **pure CSS tab filtering** by category (Alpine/Tropical/Cultural) |
-| **Accommodations** | `accommodations.html` | 3 luxury stays (Mountain Chalet, Beach Sanctuary, Eco Treehouse) with **pure CSS tab filtering** (Mountain/Beach/Eco) |
-| **Contact Us** | `contact.html` | Contact info cards (Phone, Email, Address), CSS map placeholder, multi-field inquiry form |
-| **Login** | `login.html` | Split-screen auth layout with immersive travel imagery, email/password form, remember me checkbox |
-| **Sign Up** | `signup.html` | Split-screen registration with first/last name, email, password (with confirm), travel style dropdown, T&C checkbox |
-
-### CSS Design System (`style.css` — ~1,700 lines)
-
-- **Design Tokens**: Custom properties for colors, gradients, shadows, typography, spacing, motion
-- **Premium Color Palette**: Deep Lagoon Teal (`#0D7377`), Crimson Sunset (`#F05D5E`), Luxury Gold (`#D4AC0D`)
-- **Typography**: Google Fonts — `Inter` (sans-serif body) + `Playfair Display` (serif headings)
-- **Glassmorphism**: Frosted glass effects on header, badges, and newsletter banners
-- **Micro-animations**: Hero parallax, card hover lifts, shimmer button effects, floating orbs
-- **Pure CSS Filtering**: Radio button hack for filtering packages/stays without JavaScript
-- **Responsive Design**: Mobile hamburger menu, fluid grid layouts, clamp-based typography
-- **Custom Form Styling**: Gradient checkboxes, focus ring states, inline validation indicators
+### Supported Dynamic Placeholders:
+- `{{userFirstName}}`: Displays the logged-in user's personalized name in the dashboard header.
+- `{{bookingsTable}}`: Populates the real-time, responsive SQL-driven bookings grid.
+- `{{packagesContainer}}`: Renders dynamic cards populated straight from the database.
+- `<!-- ALERT_BANNER -->` & `<!-- ERROR_BANNER -->`: Seamlessly injects styled validation or state alerts without breaking layouts.
 
 ---
 
-## ⚙ Phase 2 — Dynamic Backend (Java EE)
+## 🗄 Database Schema & Seed Data
 
-> **Java Servlets + JSP + JSTL on Apache Tomcat — File-based data persistence (no database)**
+The database resides in a **TiDB Serverless remote cluster** and contains three highly normalized tables. You can review the complete creation script in [schema.sql](file:///c:/Users/mmhus/OneDrive/Desktop/html_asna/GlobeTrekWeb/database/schema.sql).
 
-### Backend Components
+### Table Structures
 
-#### Servlets (`com.globetrek.servlet`)
+#### 1. `users` Table
+Stores authentication and access levels for Admins, Staff, and Customers.
+```sql
+CREATE TABLE users (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    full_name VARCHAR(100) NOT NULL,
+    email VARCHAR(100) NOT NULL UNIQUE,
+    password VARCHAR(255) NOT NULL,
+    role ENUM('Admin', 'Staff', 'Customer') DEFAULT 'Customer',
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+);
+```
 
-| Servlet | URL Mapping | Method | Purpose |
-|---------|-------------|--------|---------|
-| **AuthServlet** | `/auth` | POST | Handles login (validate credentials → create session → redirect to role dashboard) and signup (validate → append to `users.txt` → auto-login) |
-| **LogoutServlet** | `/logout` | GET/POST | Invalidates the HttpSession and redirects to login page |
-| **BookingServlet** | `/book` | POST | Processes customer booking submissions: validates fields, generates unique booking ID (`GT-XXXXXXXX`), appends to `bookings.txt` |
-| **AdminServlet** | `/admin/action` | POST | Admin operations: Add Staff user, Delete user, Update booking status (Pending/Confirmed/Cancelled/Completed) |
+#### 2. `packages` Table
+Stores travel packages created, modified, and monitored by administrators and staff.
+```sql
+CREATE TABLE packages (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    name VARCHAR(100) NOT NULL,
+    destination VARCHAR(100) NOT NULL,
+    price DECIMAL(10, 2) NOT NULL,
+    description TEXT,
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+);
+```
 
-#### Filter (`com.globetrek.filter`)
-
-| Filter | Purpose |
-|--------|---------|
-| **AuthFilter** | Intercepts requests to protected JSPs and servlets. Enforces **Role-Based Access Control (RBAC)**: Admin-only, Staff-or-Admin, Customer-only, Any-authenticated |
-
-#### JSP Views
-
-| JSP | Description |
-|-----|-------------|
-| `index.jsp` | Public homepage (mirrors Phase 1 `index.html`) |
-| `login.jsp` | Login form posting to `/auth?action=login` with EL error display |
-| `signup.jsp` | Registration form posting to `/auth?action=signup` with field repopulation on error |
-| `customer-dashboard.jsp` | Customer portal: Book a tour, view personal booking history |
-| `staff-dashboard.jsp` | Staff portal: View all bookings, update booking statuses |
-| `admin-dashboard.jsp` | Admin portal: Manage all users (add staff, delete users), manage all bookings |
-| `dashboard.css` | Dedicated stylesheet for all three dashboard pages |
-
-### Data Storage (Flat-File I/O)
-
-| File | Format | Description |
-|------|--------|-------------|
-| `WEB-INF/data/users.txt` | `email\|password\|role\|firstName\|lastName\|travelStyle` | User accounts (Admin, Staff, Customer) |
-| `WEB-INF/data/bookings.txt` | `bookingId\|email\|package\|destination\|date\|travelers\|notes\|status\|submittedAt` | Booking records |
-
-### Role-Based Access Control (RBAC)
-
-| Role | Can Access | Capabilities |
-|------|-----------|-------------|
-| **Admin** | Admin Dashboard | Add/delete staff, delete customers, manage all bookings, update booking status |
-| **Staff** | Staff Dashboard | View all bookings, update booking status |
-| **Customer** | Customer Dashboard | Create bookings, view personal booking history |
-
-### Security Features
-
-- Session-based authentication with `HttpSession`
-- Session fixation prevention (invalidate old session on login)
-- HttpOnly session cookies
-- 30-minute session timeout
-- Server-side input validation on all forms
-- Pipe character (`|`) injection prevention for flat-file safety
-- AuthFilter guards all protected resources
-- Admin cannot delete their own account
+#### 3. `bookings` Table
+Maps customer orders to travel packages, protected via foreign keys with cascading updates.
+```sql
+CREATE TABLE bookings (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    user_id INT NOT NULL,
+    package_id INT NOT NULL,
+    status ENUM('Pending', 'Confirmed', 'Completed', 'Cancelled') DEFAULT 'Pending',
+    booking_date TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE,
+    FOREIGN KEY (package_id) REFERENCES packages(id) ON DELETE CASCADE
+);
+```
 
 ---
 
 ## 📁 Folder Structure
 
+The code is strictly separated to maximize modularity and performance:
+
 ```
-html_asna/
+html_asna/                          # Root Repository
 │
-├── index.html                    # Homepage (Phase 1)
-├── packages.html                 # Tour Packages page
-├── accommodations.html           # Curated Stays page
-├── contact.html                  # Contact Us page
-├── login.html                    # Login page (static)
-├── signup.html                   # Signup page (static)
-├── style.css                     # Master stylesheet (~52KB, ~1,700 lines)
-├── README.md                     # This file
+├── index.html                      # Landing Page (Static copy)
+├── packages.html                   # Packages Page (Static copy)
+├── accommodations.html             # Stays Page (Static copy)
+├── contact.html                    # Contact Page (Static copy)
+├── login.html                      # Login Page (Static copy)
+├── signup.html                     # Signup Page (Static copy)
+├── style.css                       # Main CSS stylesheet
 │
-└── GlobeTrekWeb/                 # Phase 2 — Java EE Backend
-    ├── pom.xml                   # Maven build configuration
-    └── src/
-        └── main/
-            ├── java/com/globetrek/
-            │   ├── servlet/
-            │   │   ├── AuthServlet.java       # Login & Signup handler
-            │   │   ├── LogoutServlet.java      # Session invalidation
-            │   │   ├── BookingServlet.java     # Booking form processor
-            │   │   └── AdminServlet.java       # Admin CRUD operations
-            │   └── filter/
-            │       └── AuthFilter.java         # RBAC access control filter
-            │
-            └── webapp/
-                ├── index.jsp                   # Public homepage (JSP)
-                ├── login.jsp                   # Dynamic login with EL errors
-                ├── signup.jsp                  # Dynamic signup with field repopulation
-                ├── customer-dashboard.jsp      # Customer booking portal
-                ├── staff-dashboard.jsp         # Staff booking management
-                ├── admin-dashboard.jsp         # Full admin control panel
-                ├── style.css                   # Frontend styles (copy for WAR)
-                ├── dashboard.css               # Dashboard-specific styles
-                └── WEB-INF/
-                    ├── web.xml                 # Deployment descriptor
-                    └── data/
-                        ├── users.txt           # User account records
-                        └── bookings.txt        # Booking records
+└── GlobeTrekWeb/                   # Maven Core Web Application
+    ├── pom.xml                     # Maven project configuration
+    ├── database/
+    │   └── schema.sql              # Database creation & Seed data
+    └── src/main/
+        ├── java/com/globetrek/
+        │   ├── servlet/
+        │   │   ├── IndexServlet.java     # Home page interceptor & CTA manager
+        │   │   ├── LoginServlet.java     # Login interface & alert controller
+        │   │   ├── AuthServlet.java      # Auth handler (sign-in, registration validation)
+        │   │   ├── LogoutServlet.java     # Session invalidator
+        │   │   ├── BookingServlet.java    # Dynamic customer bookings handler
+        │   │   ├── AdminServlet.java      # Admin actions: user deletion, status updates
+        │   │   ├── StaffServlet.java      # Staff metrics & package price updates
+        │   │   └── PackageServlet.java    # SQL dynamic destination wildcard filter
+        │   ├── filter/
+        │   │   └── AuthFilter.java        # Security filter & RBAC Guard
+        │   └── util/
+        │       ├── DBConnection.java      # Singleton JDBC Driver cluster factory
+        │       └── TemplateRenderer.java  # Static page dynamic parser
+        │
+        └── webapp/
+            ├── WEB-INF/
+            │   └── web.xml                # Servlet routing & security declaration
+            ├── index.html                 # Core Home template
+            ├── login.html                 # Core Login template
+            ├── signup.html                # Core Signup template
+            ├── customer-dashboard.html    # Customer workspace layout
+            ├── staff-dashboard.html       # Staff booking dashboard
+            ├── admin-dashboard.html       # Admin global configuration panel
+            ├── packages.html              # Travel package template
+            ├── accommodations.html        # Premium accommodations page
+            ├── contact.html               # Contact form page
+            └── style.css                  # Premium style styles
 ```
 
 ---
 
 ## 🛠 Technology Stack
 
-| Layer | Technology | Version |
-|-------|-----------|---------|
-| **Frontend** | HTML5, CSS3 | — |
-| **Backend** | Java Servlets, JSP | Java EE 8 (javax.servlet 4.0.1) |
-| **Tag Library** | JSTL | 1.2 |
-| **Build Tool** | Apache Maven | 3.x |
-| **Server** | Apache Tomcat | 9.x (recommended) |
-| **JDK** | Java SE | 11+ |
-| **Data Storage** | Plain text files | — |
-| **Fonts** | Google Fonts | Inter, Playfair Display |
-
----
-
-## 🚀 How to Run
-
-### Phase 1 — Static Site (No server required)
-
-Simply open any `.html` file in your browser:
-
-```bash
-# Open in default browser
-start index.html       # Windows
-open index.html        # macOS
-xdg-open index.html    # Linux
-```
-
-### Phase 2 — Dynamic Backend (Requires Tomcat)
-
-#### Prerequisites
-- **JDK 11+** installed and `JAVA_HOME` set
-- **Apache Maven 3.x** installed
-- **Apache Tomcat 9.x** installed
-
-#### Build & Deploy
-
-```bash
-# 1. Navigate to the backend project
-cd GlobeTrekWeb
-
-# 2. Build the WAR file
-mvn clean package
-
-# 3. Copy the WAR to Tomcat's webapps directory
-cp target/GlobeTrekWeb.war /path/to/tomcat/webapps/
-
-# 4. Start Tomcat
-/path/to/tomcat/bin/startup.sh     # Linux/macOS
-/path/to/tomcat/bin/startup.bat    # Windows
-
-# 5. Open in browser
-# http://localhost:8080/GlobeTrekWeb/
-```
-
----
-
-## 🔐 Default Login Credentials
-
-| Role | Email | Password |
-|------|-------|----------|
-| **Admin** | `admin@globetrek.com` | `Admin@123` |
-| **Staff** | `staff@globetrek.com` | `Staff@123` |
-| **Customer** | *(Register via Sign Up page)* | *(Your chosen password)* |
+| Layer | Technology | Specification / Version | Role |
+|-------|-----------|---------|---------|
+| **Frontend** | HTML5, CSS3 | Standard Semantic Web | Responsive, visually rich interfaces |
+| **Backend** | Java Servlets | Java EE 8 (javax.servlet 4.0.1) | Dynamic controllers and template engines |
+| **Database** | TiDB Serverless | MySQL 8.0 Protocol Compatible | Secure, clusterized SQL cloud storage |
+| **Driver** | JDBC Driver | `mysql-connector-java` 8.0.28 | Establishes low-latency TCP database link |
+| **Build Tool** | Apache Maven | Maven 3.8+ | Dependency and target war file packaging |
+| **Server** | Apache Tomcat | Tomcat 9.0.x | Web application container |
+| **Design** | Google Fonts | Inter & Playfair Display | Immersive typographic systems |
 
 ---
 
 ## ✨ Features Summary
 
-### Frontend Features (Phase 1)
-- ✅ Fully responsive multi-page website (6 pages)
-- ✅ Premium glassmorphism design with micro-animations
-- ✅ Pure CSS package/accommodation filtering (no JavaScript)
-- ✅ CSS checkbox hack for responsive mobile hamburger menu
-- ✅ Custom styled form elements (checkboxes, select dropdowns, focus states)
-- ✅ CSS-only inline form validation indicators
-- ✅ SVG iconography throughout (no icon library dependencies)
-- ✅ Newsletter subscription CTA banners
-- ✅ Animated hero section with floating orbs and gradient overlays
-- ✅ Split-screen authentication layouts with immersive travel imagery
-- ✅ Semantic HTML5 structure with ARIA labels for accessibility
-- ✅ SEO-optimized meta tags on every page
+### 💎 Frontend Features
+- **100% Pure HTML/CSS**: Zero JavaScript frameworks for instant page loads.
+- **Harmony Color Scheme**: Deep Lagoon Teal (`#0D7377`), Crimson Sunset (`#F05D5E`), and Luxury Gold (`#D4AC0D`).
+- **Glassmorphism Design**: Blur backdrop overlays on headers, cards, and warning flags.
+- **Pure CSS Dynamic Tab Filters**: CSS radio button toggles filter tour packages and hotels effortlessly.
+- **Micro-Animations**: Hover card elevation, button-shimmer effects, and interactive form input transitions.
+- **SEO Optimized**: Unique meta descriptors, structured HTML5 headings, and alt labels.
 
-### Backend Features (Phase 2)
-- ✅ User Registration (Customer self-signup with auto-login)
-- ✅ User Authentication (email/password login with session management)
-- ✅ Role-Based Access Control with AuthFilter (Admin / Staff / Customer)
-- ✅ Customer Dashboard — Book tours, view personal bookings
-- ✅ Staff Dashboard — View all bookings, update booking statuses
-- ✅ Admin Dashboard — Full CRUD: add staff, delete users, manage all bookings
-- ✅ Flat-file data persistence (no database required)
-- ✅ Server-side input validation on all forms
-- ✅ Session fixation prevention and secure cookie configuration
-- ✅ Graceful error handling with user-friendly messages
-- ✅ Form field repopulation on validation errors
+### 🛡 Backend Features
+- **100% JDBC Operations**: High speed transactional database actions via `java.sql` prepared statements.
+- **Custom Template Replacement Engine**: Injects HTML layout fragments and strings with high speed before returning data.
+- **Advanced Auth Guards (RBAC)**: `AuthFilter.java` scans roles in `HttpSession` variables and restricts invalid access automatically.
+- **Live Interactive Dashboards**:
+  - **Customer Portal**: Displays personal booking histories, real-time prices, and processes instant bookings.
+  - **Staff Portal**: Computes metrics (Avg/Max Prices) and allows inline package descriptions/prices to be updated directly in the DB.
+  - **Admin Panel**: Manages all user roles, edits statuses (Pending, Confirmed, Completed, Cancelled), and executes safe SQL cascade user deletions.
+- **Secure Sessions**: Generates fresh Session IDs to prevent session fixation, applies 30-minute timeouts, and blocks script manipulation.
 
 ---
 
-## 📸 Screenshots & Pages
+## 🔐 Default Login Credentials
 
-| Page | Description |
-|------|-------------|
-| 🏠 **Homepage** | Full-bleed hero with gradient overlays, company profile cards, newsletter CTA |
-| 🎒 **Packages** | Swiss Alps ($2,499), Bali ($1,899), Kyoto ($2,199) — filterable by category |
-| 🏨 **Accommodations** | Alpine Chalet ($350/night), Beach Villa ($480/night), Eco Pods ($220/night) |
-| 📬 **Contact** | Phone, Email, Address cards + styled inquiry form |
-| 🔑 **Login** | Split-screen with mountain imagery + email/password form |
-| 📝 **Sign Up** | Split-screen with beach imagery + multi-field registration |
-| 📊 **Dashboards** | Role-specific dashboards with booking management (Phase 2) |
+Use the following academic accounts to test the Role-Based dashboards:
+
+| Role | Email | Password | Dashboard Redirect |
+|------|-------|----------|---------------------|
+| **Admin** | `admin@globetrek.com` | `Admin@123` | `/admin-dashboard.html` |
+| **Staff** | `staff@globetrek.com` | `Staff@123` | `/staff-dashboard.html` |
+| **Customer** | `john.doe@example.com` | `Customer@123` | `/customer-dashboard.html` |
+| **Customer (Register)** | *(Create via Sign Up)* | *(Your custom choice)* | `/customer-dashboard.html` |
 
 ---
 
-## 🎨 Design Highlights
+## 🚀 Deployment & How to Run
 
-- **Color Palette**: Deep Lagoon Teal + Crimson Sunset + Luxury Gold
-- **Glass Effects**: Frosted glass header navigation and badge overlays
-- **Motion Design**: Spring-physics hover animations, shimmer button effects
-- **Custom Scrollbar**: Gradient-styled scrollbar matching the brand palette
-- **Dark Footer**: Rich charcoal-teal with radial gradient accents
-- **Card System**: Multi-elevation shadow system with hover lift effects
-- **Typography**: Dual-font system (sans + serif) for visual hierarchy
+### 1. Set Up Database
+Connect to your MySQL server (or remote cluster) and run the initialization script to prepare tables and seed data:
+```bash
+mysql -h <host> -u <user> -p < GlobeTrekWeb/database/schema.sql
+```
+
+### 2. Configure JDBC Connection
+Open [DBConnection.java](file:///c:/Users/mmhus/OneDrive/Desktop/html_asna/GlobeTrekWeb/src/main/java/com/globetrek/util/DBConnection.java) and modify the remote connection credentials to target your cluster:
+```java
+private static final String URL  = "jdbc:mysql://<your-tidb-host>:4000/globetrek_db?useSSL=true";
+private static final String USER = "<your-username>";
+private static final String PASS = "<your-password>";
+```
+
+### 3. Package and Deploy
+Build the deployment-ready Web ARchive (`.war`) file via Maven:
+```bash
+cd GlobeTrekWeb
+mvn clean package
+```
+
+Copy the packaged `.war` to your local Tomcat deployment server:
+```bash
+cp target/GlobeTrekWeb.war /path/to/tomcat/webapps/
+```
+
+### 4. Run Tomcat
+Launch your Tomcat application container:
+* **Windows**: Run `\path\to\tomcat\bin\startup.bat`
+* **Linux/macOS**: Run `sh /path/to/tomcat/bin/startup.sh`
+
+Navigate to the live URL: `http://localhost:8080/GlobeTrekWeb/index.html`.
 
 ---
 
 ## 👩‍💻 Author Fathima Asna
 **ICBT Web Development Module**  
-GlobeTrek Adventures — Academic Project
+GlobeTrek Adventures — Academic Full-Stack Project
 
 ---
 

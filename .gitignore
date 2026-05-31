@@ -19,3 +19,8 @@ desktop.ini
 
 # Log files
 *.log
+
+# Deployment / temp files
+Dockerfile
+SetupDatabase.*
+mysql-connector-*.jar

@@ -1,6 +1,7 @@
 package com.globetrek.servlet;
 
 import com.globetrek.util.DBConnection;
+import com.globetrek.util.TemplateRenderer;
 
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServlet;
@@ -33,9 +34,9 @@ public class AuthServlet extends HttpServlet {
     public static final String ROLE_CUSTOMER = "Customer";
 
     // ── Dashboard redirect paths ─────────────────────────────────────────────
-    private static final String ADMIN_DASH    = "admin-dashboard.jsp";
+    private static final String ADMIN_DASH    = "admin/action";
     private static final String STAFF_DASH    = "staff/action";
-    private static final String CUSTOMER_DASH = "customer-dashboard.jsp";
+    private static final String CUSTOMER_DASH = "customer/dashboard";
 
     // ── Route POST requests ──────────────────────────────────────────────────
     @Override
@@ -51,7 +52,7 @@ public class AuthServlet extends HttpServlet {
             handleSignup(request, response);
         } else {
             // Unknown action — redirect home
-            response.sendRedirect(request.getContextPath() + "/index.jsp");
+            response.sendRedirect(request.getContextPath() + "/index.html");
         }
     }
 
@@ -118,7 +119,7 @@ public class AuthServlet extends HttpServlet {
                 case ROLE_ADMIN:    redirectUrl += ADMIN_DASH;    break;
                 case ROLE_STAFF:    redirectUrl += STAFF_DASH;    break;
                 case ROLE_CUSTOMER: redirectUrl += CUSTOMER_DASH; break;
-                default:            redirectUrl += "index.jsp";   break;
+                default:            redirectUrl += "index.html";   break;
             }
 
             response.sendRedirect(redirectUrl);
@@ -245,29 +246,56 @@ public class AuthServlet extends HttpServlet {
     // ============================================================
 
     /**
-     * Repopulates the login page with an error message via request attributes.
-     * The error is displayed using JSP Expression Language in login.jsp.
+     * Repopulates the login page with an error message in HTML format.
      */
     private void forwardToLogin(HttpServletRequest request, HttpServletResponse response,
                                 String errorMsg) throws ServletException, IOException {
-        request.setAttribute("errorMsg", errorMsg);
-        request.getRequestDispatcher("/login.jsp").forward(request, response);
+        String html = TemplateRenderer.render(getServletContext(), "/login.html");
+        
+        String errorHtml = "";
+        if (errorMsg != null && !errorMsg.isEmpty()) {
+            errorHtml = "<div class=\"dash-alert dash-alert--error\" style=\"margin-bottom: 20px; display: flex; align-items: center; gap: 10px; background: rgba(235, 94, 85, 0.1); border-left: 4px solid var(--primary); padding: 12px 18px; border-radius: 8px; color: var(--primary); font-size: 0.9rem;\">\n" +
+                        "  <svg viewBox=\"0 0 24 24\" style=\"width: 20px; height: 20px; fill: var(--primary); flex-shrink: 0;\"><path d=\"M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm1 15h-2v-2h2v2zm0-4h-2V7h2v6z\"/></svg>\n" +
+                        "  <span>" + errorMsg + "</span>\n" +
+                        "</div>";
+        }
+        
+        html = html.replace("<!-- ERROR_BANNER -->", errorHtml);
+        response.setContentType("text/html;charset=UTF-8");
+        response.getWriter().write(html);
     }
 
     /**
-     * Repopulates the signup page with an error message AND the field values
-     * the user typed so they don't have to re-enter everything.
+     * Repopulates the signup page with an error message in HTML format.
+     * Keeps field values the user typed so they don't have to re-enter.
      */
     private void forwardToSignup(HttpServletRequest request, HttpServletResponse response,
                                  String errorMsg, String firstName, String lastName,
                                  String email, String travelStyle)
             throws ServletException, IOException {
-        request.setAttribute("errorMsg",    errorMsg);
-        request.setAttribute("firstName",   firstName);
-        request.setAttribute("lastName",    lastName);
-        request.setAttribute("email",       email);
-        request.setAttribute("travelStyle", travelStyle);
-        request.getRequestDispatcher("/signup.jsp").forward(request, response);
+        String html = TemplateRenderer.render(getServletContext(), "/signup.html");
+        
+        String errorHtml = "";
+        if (errorMsg != null && !errorMsg.isEmpty()) {
+            errorHtml = "<div class=\"dash-alert dash-alert--error\" style=\"margin-bottom: 20px; display: flex; align-items: center; gap: 10px; background: rgba(235, 94, 85, 0.1); border-left: 4px solid var(--primary); padding: 12px 18px; border-radius: 8px; color: var(--primary); font-size: 0.9rem;\">\n" +
+                        "  <svg viewBox=\"0 0 24 24\" style=\"width: 20px; height: 20px; fill: var(--primary); flex-shrink: 0;\"><path d=\"M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm1 15h-2v-2h2v2zm0-4h-2V7h2v6z\"/></svg>\n" +
+                        "  <span>" + errorMsg + "</span>\n" +
+                        "</div>";
+        }
+        
+        html = html.replace("<!-- ERROR_BANNER -->", errorHtml);
+        
+        // Prefill inputs
+        html = html.replace("name=\"first_name\"", "name=\"first_name\" value=\"" + (firstName != null ? firstName : "") + "\"");
+        html = html.replace("name=\"last_name\"", "name=\"last_name\" value=\"" + (lastName != null ? lastName : "") + "\"");
+        html = html.replace("name=\"email\"", "name=\"email\" value=\"" + (email != null ? email : "") + "\"");
+        
+        if (travelStyle != null && !travelStyle.isEmpty()) {
+            html = html.replace("value=\"" + travelStyle + "\"", "value=\"" + travelStyle + "\" selected");
+        }
+        
+        response.setContentType("text/html;charset=UTF-8");
+        response.getWriter().write(html);
     }
 
     // ============================================================

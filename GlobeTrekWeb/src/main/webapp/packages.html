@@ -3,8 +3,8 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <meta name="description" content="Browse curated luxury stays with GlobeTrek Adventures. Mountain chalets, oceanfront villas, and eco pods. Filter options in real-time.">
-    <title>Curated Stays | GlobeTrek Adventures</title>
+    <meta name="description" content="Explore GlobeTrek Adventures featured tour packages. Use our custom filter to browse alpine, tropical, and cultural expeditions.">
+    <title>Featured Adventures | GlobeTrek Adventures</title>
     
     <!-- Link to single comprehensive stylesheet -->
     <link rel="stylesheet" href="style.css">
@@ -35,8 +35,8 @@
             <!-- Main Menu Links -->
             <ul class="nav-menu" id="navigation-links">
                 <li><a href="index.html" class="nav-link" id="nav-home">Home</a></li>
-                <li><a href="packages.html" class="nav-link" id="nav-packages">Packages</a></li>
-                <li><a href="accommodations.html" class="nav-link active" id="nav-stays">Stays</a></li>
+                <li><a href="packages.html" class="nav-link active" id="nav-packages">Packages</a></li>
+                <li><a href="accommodations.html" class="nav-link" id="nav-stays">Stays</a></li>
                 <li><a href="contact.html" class="nav-link" id="nav-contact">Contact</a></li>
             </ul>
 
@@ -50,106 +50,36 @@
 
     <!-- --- MAIN CONTENT --- -->
     <main>
-        <section class="section-padding" style="background-color: var(--light);" id="stays-page-content">
+        <section class="section-padding" style="background-color: var(--light);" id="packages-page-content">
             <div class="container">
                 <div class="text-center mb-50" style="max-width: 700px; margin-left: auto; margin-right: auto;">
-                    <h2 class="decorated decorated-center">Architectural Sanctuaries</h2>
-                    <p style="font-size: 1.15rem; opacity: 0.85;">Discover accommodations that are more than just places to sleep—they are expressions of design that blend seamlessly into their natural environments. Filter below.</p>
+                    <h2 class="decorated decorated-center">Curated Expeditions</h2>
+                    <p style="font-size: 1.15rem; opacity: 0.85;">Embark on journeys meticulously designed to balance breathtaking exploration with premium luxury. Filter by your preferred travel style below.</p>
+                    
+                    <!-- Search Form -->
+                    <form action="packages" method="GET" style="display: flex; gap: 10px; justify-content: center; margin-top: 30px; max-width: 500px; margin-left: auto; margin-right: auto;">
+                        <input type="text" name="destination" placeholder="Search by destination (e.g. Switzerland)" value="<!-- SEARCH_VALUE -->" class="footer-newsletter-input" style="background: var(--white); color: var(--dark); border: 1px solid var(--border); padding: 12px 18px; border-radius: 8px; font-size: 0.95rem; width: 100%;" required>
+                        <button type="submit" class="btn btn-primary" style="padding: 12px 24px; font-size: 0.95rem; border-radius: 8px; margin: 0; white-space: nowrap;">Search</button>
+                    </form>
                 </div>
 
-                <!-- Pure CSS Stays Filtering Setup -->
-                <input type="radio" class="filter-radio" id="filter-all" name="stay-filter" checked>
-                <input type="radio" class="filter-radio" id="filter-mountain" name="stay-filter">
-                <input type="radio" class="filter-radio" id="filter-beach" name="stay-filter">
-                <input type="radio" class="filter-radio" id="filter-eco" name="stay-filter">
+                <!-- Pure CSS Tab Filtering Setup -->
+                <input type="radio" class="filter-radio" id="filter-all" name="package-filter" checked>
+                <input type="radio" class="filter-radio" id="filter-alpine" name="package-filter">
+                <input type="radio" class="filter-radio" id="filter-tropical" name="package-filter">
+                <input type="radio" class="filter-radio" id="filter-cultural" name="package-filter">
 
-                <!-- Filter Labels Control Row -->
-                <div class="filter-tabs" id="stays-filter-tabs">
-                    <label class="filter-label" for="filter-all">All Stays</label>
-                    <label class="filter-label" for="filter-mountain">Mountain Resorts</label>
-                    <label class="filter-label" for="filter-beach">Seaside Retreats</label>
-                    <label class="filter-label" for="filter-eco">Eco Lodges</label>
+                <!-- Filter Labels Control Bar -->
+                <div class="filter-tabs" id="packages-filter-tabs">
+                    <label class="filter-label" for="filter-all">All Adventures</label>
+                    <label class="filter-label" for="filter-alpine">Alpine Peaks</label>
+                    <label class="filter-label" for="filter-tropical">Tropical Reefs</label>
+                    <label class="filter-label" for="filter-cultural">Cultural Trails</label>
                 </div>
 
-                <!-- Grid of Stays -->
-                <div class="accommodations-grid" id="accommodations-display-grid">
-                    <!-- Stay 1 -->
-                    <article class="accom-card mountain" id="stay-chalet">
-                        <div class="accom-media">
-                            <img class="accom-img" src="https://images.unsplash.com/photo-1518005020951-eccb494ad742?q=80&w=800&auto=format&fit=crop" alt="Modern glass chalet in snow capped mountains">
-                        </div>
-                        <div class="accom-info">
-                            <span class="accom-type">Mountain Resort</span>
-                            <h3>The Alpine Glasshouse Chalet</h3>
-                            <p>Featuring panoramic floor-to-ceiling glass walls, an open outdoor heated hot tub, and private ski-in/ski-out access in the Swiss Alps.</p>
-                            <ul class="accom-amenities">
-                                <li class="accom-amenity">
-                                    <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm1 17h-2v-6h2v6zm0-8h-2V7h2v4z"/></svg>
-                                    Heated Spa
-                                </li>
-                                <li class="accom-amenity">
-                                    <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path d="M12 2L2 22h20L12 2zm0 3.99L19.53 19H4.47L12 5.99z"/></svg>
-                                    Summit Views
-                                </li>
-                            </ul>
-                            <div class="accom-footer">
-                                <span class="accom-price">$350 <span>/ night</span></span>
-                                <a href="contact.html" class="btn btn-outline btn-sm" style="padding: 8px 16px; font-size: 0.8rem;" id="inquire-chalet">Inquire Stays</a>
-                            </div>
-                        </div>
-                    </article>
-
-                    <!-- Stay 2 -->
-                    <article class="accom-card beach" id="stay-sanctuary">
-                        <div class="accom-media">
-                            <img class="accom-img" src="https://images.unsplash.com/photo-1439066615861-d1af74d74000?q=80&w=800&auto=format&fit=crop" alt="Luxury beachfront bungalows in sunset water">
-                        </div>
-                        <div class="accom-info">
-                            <span class="accom-type">Oceanfront Villa</span>
-                            <h3>Anantara Beach Sanctuary</h3>
-                            <p>Step from your mahogany bedroom directly into crystal blue waves. Complete with an overwater deck, infinity pool, and personal butler.</p>
-                            <ul class="accom-amenities">
-                                <li class="accom-amenity">
-                                    <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm1 17h-2v-6h2v6zm0-8h-2V7h2v4z"/></svg>
-                                    Private Deck
-                                </li>
-                                <li class="accom-amenity">
-                                    <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path d="M12 2L2 22h20L12 2zm0 3.99L19.53 19H4.47L12 5.99z"/></svg>
-                                    Infinity Pool
-                                </li>
-                            </ul>
-                            <div class="accom-footer">
-                                <span class="accom-price">$480 <span>/ night</span></span>
-                                <a href="contact.html" class="btn btn-outline btn-sm" style="padding: 8px 16px; font-size: 0.8rem;" id="inquire-beach">Inquire Stays</a>
-                            </div>
-                        </div>
-                    </article>
-
-                    <!-- Stay 3 -->
-                    <article class="accom-card eco" id="stay-canopy">
-                        <div class="accom-media">
-                            <img class="accom-img" src="https://images.unsplash.com/photo-1470071459604-3b5ec3a7fe05?q=80&w=800&auto=format&fit=crop" alt="Eco lodge pods suspended high in green trees">
-                        </div>
-                        <div class="accom-info">
-                            <span class="accom-type">Eco Lodge</span>
-                            <h3>Kyoto Canopy Treehouse Pods</h3>
-                            <p>Suspended 15 meters above the forest floor, these architectural wonders offer zero-impact living, organic dining, and wild forest views.</p>
-                            <ul class="accom-amenities">
-                                <li class="accom-amenity">
-                                    <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm1 17h-2v-6h2v6zm0-8h-2V7h2v4z"/></svg>
-                                    Organic Dining
-                                </li>
-                                <li class="accom-amenity">
-                                    <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path d="M12 2L2 22h20L12 2zm0 3.99L19.53 19H4.47L12 5.99z"/></svg>
-                                    Forest Safari
-                                </li>
-                            </ul>
-                            <div class="accom-footer">
-                                <span class="accom-price">$220 <span>/ night</span></span>
-                                <a href="contact.html" class="btn btn-outline btn-sm" style="padding: 8px 16px; font-size: 0.8rem;" id="inquire-canopy">Inquire Stays</a>
-                            </div>
-                        </div>
-                    </article>
+                <!-- Output Packages Grid -->
+                <div class="packages-grid" id="packages-display-grid">
+                    <!-- PACKAGE_CARDS -->
                 </div>
             </div>
         </section>

@@ -21,7 +21,7 @@ import java.sql.SQLException;
 public class DBConnection {
 
     // ── Database Configuration ─────────────────────────────────────────────
-    private static final String URL  = "jdbc:mysql://gateway01.ap-southeast-1.prod.alicloud.tidbcloud.com:4000/sys?useSSL=true";
+    private static final String URL  = "jdbc:mysql://gateway01.ap-southeast-1.prod.alicloud.tidbcloud.com:4000/globetrek_db?useSSL=true";
     private static final String USER = "4VpADr8GP3KkGYZ.root";
     private static final String PASS = "sFlDugPL3eJnUJjd";
 

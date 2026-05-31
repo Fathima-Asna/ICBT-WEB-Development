@@ -11,13 +11,13 @@ import java.io.IOException;
  * role-based access control using the active HttpSession.
  *
  * Protected URL patterns (declared in web.xml):
- *   /customer-dashboard.jsp  → requires role: Customer (or higher)
- *   /staff-dashboard.jsp     → requires role: Staff or Admin
- *   /admin-dashboard.jsp     → requires role: Admin only
+ *   /customer-dashboard.html  → requires role: Customer (or higher)
+ *   /staff-dashboard.html     → requires role: Staff or Admin
+ *   /admin-dashboard.html     → requires role: Admin only
  *   /admin/action            → requires role: Admin only
  *   /book                    → requires any authenticated session
  *
- * If no valid session exists → redirect to /login.jsp?error=unauthorized
+ * If no valid session exists → redirect to /login.html?error=unauthorized
  * If session exists but role is insufficient → redirect to their own dashboard
  */
 public class AuthFilter implements Filter {
@@ -42,7 +42,7 @@ public class AuthFilter implements Filter {
 
         // ── 2. No authenticated session → force login ─────────────────────────
         if (role == null) {
-            response.sendRedirect(request.getContextPath() + "/login.jsp?error=unauthorized");
+            response.sendRedirect(request.getContextPath() + "/login.html?error=unauthorized");
             return;
         }
 
@@ -56,7 +56,7 @@ public class AuthFilter implements Filter {
                 : requestURI;
 
         // ── 4. Admin-only resources ───────────────────────────────────────────
-        if (resourcePath.startsWith("/admin-dashboard.jsp") ||
+        if (resourcePath.startsWith("/admin-dashboard.html") ||
             resourcePath.startsWith("/admin/action")) {
 
             if (!"Admin".equals(role)) {
@@ -67,7 +67,8 @@ public class AuthFilter implements Filter {
         }
 
         // ── 5. Staff or Admin resources ───────────────────────────────────────
-        if (resourcePath.startsWith("/staff-dashboard.jsp")) {
+        if (resourcePath.startsWith("/staff-dashboard.html") ||
+            resourcePath.startsWith("/staff/action")) {
             if (!"Staff".equals(role) && !"Admin".equals(role)) {
                 response.sendRedirect(request.getContextPath() + getDashboardForRole(role));
                 return;
@@ -75,7 +76,8 @@ public class AuthFilter implements Filter {
         }
 
         // ── 6. Customer-only resources (booking, customer dashboard) ──────────
-        if (resourcePath.startsWith("/customer-dashboard.jsp")) {
+        if (resourcePath.startsWith("/customer-dashboard.html") ||
+            resourcePath.startsWith("/customer/dashboard")) {
             if (!"Customer".equals(role)) {
                 response.sendRedirect(request.getContextPath() + getDashboardForRole(role));
                 return;
@@ -90,12 +92,12 @@ public class AuthFilter implements Filter {
      * Maps a role string to the matching dashboard JSP path.
      */
     private String getDashboardForRole(String role) {
-        if (role == null) return "/login.jsp";
+        if (role == null) return "/login.html";
         switch (role) {
-            case "Admin":    return "/admin-dashboard.jsp";
-            case "Staff":    return "/staff-dashboard.jsp";
-            case "Customer": return "/customer-dashboard.jsp";
-            default:         return "/login.jsp";
+            case "Admin":    return "/admin/action";
+            case "Staff":    return "/staff/action";
+            case "Customer": return "/customer/dashboard";
+            default:         return "/login.html";
         }
     }
 

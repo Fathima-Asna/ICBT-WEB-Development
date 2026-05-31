@@ -15,7 +15,7 @@
     <header>
         <div class="container header-container">
             <!-- Brand Identity -->
-            <a href="index.jsp" class="brand" id="brand-home-link">
+            <a href="index.html" class="brand" id="brand-home-link">
                 <!-- Premium SVG Compass Logo -->
                 <svg class="brand-logo-svg" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
                     <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm0 18c-4.41 0-8-3.59-8-8s3.59-8 8-8 8 3.59 8 8-3.59 8-8 8zm1-13h-2v4H7v2h4v4h2v-4h4v-2h-4V7z"/>
@@ -34,16 +34,16 @@
 
             <!-- Main Menu Links -->
             <ul class="nav-menu" id="navigation-links">
-                <li><a href="index.jsp" class="nav-link" id="nav-home">Home</a></li>
-                <li><a href="packages" class="nav-link" id="nav-packages">Packages</a></li>
+                <li><a href="index.html" class="nav-link" id="nav-home">Home</a></li>
+                <li><a href="packages.html" class="nav-link" id="nav-packages">Packages</a></li>
                 <li><a href="accommodations.html" class="nav-link" id="nav-stays">Stays</a></li>
                 <li><a href="contact.html" class="nav-link active" id="nav-contact">Contact</a></li>
             </ul>
 
             <!-- Call to Actions -->
             <div class="nav-cta" id="header-cta-buttons">
-                <a href="login.jsp" class="btn btn-outline" style="padding: 10px 22px; font-size: 0.85rem;" id="cta-login">Login</a>
-                <a href="signup.jsp" class="btn btn-primary" style="padding: 10px 22px; font-size: 0.85rem;" id="cta-signup">Sign Up</a>
+                <a href="login.html" class="btn btn-outline" style="padding: 10px 22px; font-size: 0.85rem;" id="cta-login">Login</a>
+                <a href="signup.html" class="btn btn-primary" style="padding: 10px 22px; font-size: 0.85rem;" id="cta-signup">Sign Up</a>
             </div>
         </div>
     </header>
@@ -110,9 +110,6 @@
 
                     <!-- Right Column: Submission Form -->
                     <div class="contact-form-side" id="contact-form-container">
-                        <!-- Custom Premium Pure-CSS/No-JS alert banners if query parameter flags are detected via CSS hacks (or simply standard display) -->
-                        <!-- Note: Since this is static HTML we will use a small inline stylesheet helper to show query parameter banners if needed, or simply standard layout. But standard redirect is sufficient. -->
-                        
                         <form action="ContactServlet" method="POST" autocomplete="on">
                             
                             <!-- Name Field -->
@@ -198,10 +195,10 @@
                 <div class="footer-col" id="footer-destinations">
                     <h4>Destinations</h4>
                     <ul class="footer-links">
-                        <li><a href="packages">Swiss Alps Peaks</a></li>
-                        <li><a href="packages">Bali & Gili Islands</a></li>
-                        <li><a href="packages">Ancient Kyoto</a></li>
-                        <li><a href="packages">Patagonia Expeditions</a></li>
+                        <li><a href="packages.html">Swiss Alps Peaks</a></li>
+                        <li><a href="packages.html">Bali & Gili Islands</a></li>
+                        <li><a href="packages.html">Ancient Kyoto</a></li>
+                        <li><a href="packages.html">Patagonia Expeditions</a></li>
                     </ul>
                 </div>
 
@@ -209,10 +206,10 @@
                 <div class="footer-col" id="footer-company">
                     <h4>GlobeTrek Info</h4>
                     <ul class="footer-links">
-                        <li><a href="index.jsp#why-choose-us">About Our Mission</a></li>
+                        <li><a href="index.html#why-choose-us">About Our Mission</a></li>
                         <li><a href="contact.html">Contact Support</a></li>
-                        <li><a href="signup.jsp">Join Travel Club</a></li>
-                        <li><a href="login.jsp">Agency Login</a></li>
+                        <li><a href="signup.html">Join Travel Club</a></li>
+                        <li><a href="login.html">Agency Login</a></li>
                     </ul>
                 </div>
 
@@ -220,7 +217,7 @@
                 <div class="footer-col" id="footer-newsletter">
                     <h4>Newsletter</h4>
                     <p>Get exclusive monthly escape itineraries, seasonal packages, and off-grid insights.</p>
-                    <form action="ContactServlet" method="POST" class="footer-newsletter-form">
+                    <form action="contact.html" method="POST" class="footer-newsletter-form">
                         <input type="email" placeholder="Join our circle" class="footer-newsletter-input" required aria-label="Email address for subscription">
                         <button type="submit" class="footer-newsletter-btn" aria-label="Submit newsletter">
                             <svg viewBox="0 0 24 24" style="width: 16px; height: 16px; fill: var(--white);"><path d="M2.01 21L23 12 2.01 3 2 10l15 2-15 2z"/></svg>
@@ -235,9 +232,9 @@
                     &copy; 2026 GlobeTrek Adventures Ltd. All rights reserved. Made with absolute care by Expert UI/UX.
                 </div>
                 <ul class="footer-policies">
-                    <li><a href="index.jsp">Privacy Policy</a></li>
-                    <li><a href="index.jsp">Terms of Service</a></li>
-                    <li><a href="index.jsp">Sitemap</a></li>
+                    <li><a href="index.html">Privacy Policy</a></li>
+                    <li><a href="index.html">Terms of Service</a></li>
+                    <li><a href="index.html">Sitemap</a></li>
                 </ul>
             </div>
         </div>

@@ -1716,34 +1716,3 @@ footer {
     .hero p          { font-size: 1.05rem; }
     .newsletter-banner { padding: 48px 24px; }
 }
-
-/* =================================================================
-   AUTH BANNERS — For login.jsp and signup.jsp error / success messages
-   (Appended for Phase 2 backend integration)
-   ================================================================= */
-.auth-banner {
-    display: flex;
-    align-items: center;
-    gap: 12px;
-    padding: 14px 18px;
-    border-radius: 12px;
-    font-size: 0.875rem;
-    font-weight: 500;
-    margin-bottom: 22px;
-    line-height: 1.45;
-}
-.auth-banner svg {
-    width: 20px; height: 20px;
-    fill: currentColor;
-    flex-shrink: 0;
-}
-.auth-banner--error {
-    background: rgba(232, 65, 74, 0.08);
-    border: 1px solid rgba(232, 65, 74, 0.30);
-    color: #A93226;
-}
-.auth-banner--success {
-    background: rgba(23, 165, 137, 0.08);
-    border: 1px solid rgba(23, 165, 137, 0.30);
-    color: #117A65;
-}

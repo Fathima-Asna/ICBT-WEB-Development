@@ -1,0 +1,220 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Admin Dashboard | GlobeTrek Adventures</title>
+    <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="dashboard.css">
+</head>
+<body>
+<div class="dash-wrapper">
+
+    <!-- ══════════════════════════════════════════════
+         SIDEBAR
+         ══════════════════════════════════════════════ -->
+    <aside class="dash-sidebar" role="navigation" aria-label="Admin dashboard navigation">
+        <a href="index.html" class="sidebar-brand">
+            <svg viewBox="0 0 24 24"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm0 18c-4.41 0-8-3.59-8-8s3.59-8 8-8 8 3.59 8 8-3.59 8-8 8zm1-13h-2v4H7v2h4v4h2v-4h4v-2h-4V7z"/></svg>
+            <div class="sidebar-brand-name">GlobeTrek<span>Adventures</span></div>
+        </a>
+
+        <div class="sidebar-role-badge role-admin">Administrator</div>
+
+        <div class="sidebar-user">
+            <div class="sidebar-user-name">{{adminName}}</div>
+            <div class="sidebar-user-email">{{adminEmail}}</div>
+        </div>
+
+        <nav class="sidebar-nav">
+            <div class="sidebar-nav-section-label">Overview</div>
+            <a href="#stats-section" class="sidebar-nav-item active">
+                <svg viewBox="0 0 24 24"><path d="M19 3H5c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2zm-5 14H7v-2h7v2zm3-4H7v-2h10v2zm0-4H7V7h10v2z"/></svg>
+                Stats Overview
+            </a>
+            <div class="sidebar-nav-section-label">User Management</div>
+            <a href="#users-section" class="sidebar-nav-item">
+                <svg viewBox="0 0 24 24"><path d="M16 11c1.66 0 2.99-1.34 2.99-3S17.66 5 16 5c-1.66 0-3 1.34-3 3s1.34 3 3 3zm-8 0c1.66 0 2.99-1.34 2.99-3S9.66 5 8 5C6.34 5 5 6.34 5 8s1.34 3 3 3zm0 2c-2.33 0-7 1.17-7 3.5V19h14v-2.5c0-2.33-4.67-3.5-7-3.5zm8 0c-.29 0-.62.02-.97.05 1.16.84 1.97 1.97 1.97 3.45V19h6v-2.5c0-2.33-4.67-3.5-7-3.5z"/></svg>
+                All Users
+            </a>
+            <a href="#add-staff-section" class="sidebar-nav-item">
+                <svg viewBox="0 0 24 24"><path d="M15 12c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm-9-2V7H4v3H1v2h3v3h2v-3h3v-2H6zm9 4c-2.67 0-8 1.34-8 4v2h16v-2c0-2.66-5.33-4-8-4z"/></svg>
+                Add Staff Member
+            </a>
+            <div class="sidebar-nav-section-label">Bookings</div>
+            <a href="#bookings-section" class="sidebar-nav-item">
+                <svg viewBox="0 0 24 24"><path d="M14 2H6c-1.1 0-1.99.9-1.99 2L4 20c0 1.1.89 2 1.99 2H18c1.1 0 2-.9 2-2V8l-6-6zm2 16H8v-2h8v2zm0-4H8v-2h8v2zm-3-5V3.5L18.5 9H13z"/></svg>
+                All Bookings
+            </a>
+        </nav>
+
+        <div class="sidebar-footer">
+            <a href="logout" class="sidebar-logout">
+                <svg viewBox="0 0 24 24"><path d="M17 7l-1.41 1.41L18.17 11H8v2h10.17l-2.58 2.58L17 17l5-5zM4 5h8V3H4c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h8v-2H4V5z"/></svg>
+                Sign Out
+            </a>
+        </div>
+    </aside>
+
+    <!-- ══════════════════════════════════════════════
+         MAIN CONTENT
+         ══════════════════════════════════════════════ -->
+    <main class="dash-main">
+
+        <!-- Welcome Strip -->
+        <div class="dash-hero-strip">
+            <div class="dash-hero-greeting">
+                Administration Panel — <span>GlobeTrek</span>
+            </div>
+            <p class="dash-hero-tagline">
+                Full system control. Manage users, staff accounts, and all customer bookings below.
+            </p>
+        </div>
+
+        <!-- ── Feedback Banners ─────────────────────────────────────── -->
+        <!-- ALERT_BANNER -->
+
+        <!-- ══════════════════════════════════════════════════════════
+             SECTION 1: Stats Overview
+             ══════════════════════════════════════════════════════════ -->
+        <section id="stats-section">
+            <div class="dash-stats-grid" style="margin-bottom:28px;">
+                <div class="stat-card">
+                    <div class="stat-card-icon">
+                        <svg viewBox="0 0 24 24"><path d="M16 11c1.66 0 2.99-1.34 2.99-3S17.66 5 16 5c-1.66 0-3 1.34-3 3s1.34 3 3 3zm-8 0c1.66 0 2.99-1.34 2.99-3S9.66 5 8 5C6.34 5 5 6.34 5 8s1.34 3 3 3zm0 2c-2.33 0-7 1.17-7 3.5V19h14v-2.5c0-2.33-4.67-3.5-7-3.5zm8 0c-.29 0-.62.02-.97.05 1.16.84 1.97 1.97 1.97 3.45V19h6v-2.5c0-2.33-4.67-3.5-7-3.5z"/></svg>
+                    </div>
+                    <div class="stat-card-value">{{totalUsers}}</div>
+                    <div class="stat-card-label">Total Users</div>
+                </div>
+                <div class="stat-card accent-gold">
+                    <div class="stat-card-icon">
+                        <svg viewBox="0 0 24 24"><path d="M14 2H6c-1.1 0-1.99.9-1.99 2L4 20c0 1.1.89 2 1.99 2H18c1.1 0 2-.9 2-2V8l-6-6zm2 16H8v-2h8v2zm0-4H8v-2h8v2zm-3-5V3.5L18.5 9H13z"/></svg>
+                    </div>
+                    <div class="stat-card-value">{{totalBookings}}</div>
+                    <div class="stat-card-label">Active Bookings</div>
+                </div>
+                <div class="stat-card accent-cyan">
+                    <div class="stat-card-icon">
+                        <svg viewBox="0 0 24 24"><path d="M12 12c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm0 2c-2.67 0-8 1.34-8 4v2h16v-2c0-2.66-5.33-4-8-4z"/></svg>
+                    </div>
+                    <div class="stat-card-value">{{staffCount}}</div>
+                    <div class="stat-card-label">Agency Staff</div>
+                </div>
+                <div class="stat-card accent-green">
+                    <div class="stat-card-icon">
+                        <svg viewBox="0 0 24 24"><path d="M16 11c1.66 0 2.99-1.34 2.99-3S17.66 5 16 5c-1.66 0-3 1.34-3 3s1.34 3 3 3zm-8 0c1.66 0 2.99-1.34 2.99-3S9.66 5 8 5C6.34 5 5 6.34 5 8s1.34 3 3 3zm0 2c-2.33 0-7 1.17-7 3.5V19h14v-2.5c0-2.33-4.67-3.5-7-3.5zm8 0c-.29 0-.62.02-.97.05 1.16.84 1.97 1.97 1.97 3.45V19h6v-2.5c0-2.33-4.67-3.5-7-3.5z"/></svg>
+                    </div>
+                    <div class="stat-card-value">{{customerCount}}</div>
+                    <div class="stat-card-label">Customers</div>
+                </div>
+            </div>
+        </section>
+
+        <!-- ══════════════════════════════════════════════════════════
+             SECTION 2: Users Management
+             ══════════════════════════════════════════════════════════ -->
+        <section id="users-section" style="margin-bottom:28px;">
+            <div class="dash-panel">
+                <div class="dash-panel-header">
+                    <h2 class="dash-panel-title">System User Accounts</h2>
+                </div>
+                <div class="dash-panel-body no-pad">
+                    <div class="dash-table-wrapper">
+                        <table class="dash-table" id="users-table">
+                            <thead>
+                                <tr>
+                                    <th>ID</th>
+                                    <th>Full Name</th>
+                                    <th>Email Address</th>
+                                    <th>Role Permissions</th>
+                                    <th>Created On</th>
+                                    <th>Actions</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {{usersTable}}
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- ══════════════════════════════════════════════════════════
+             SECTION 3: Add Staff Member
+             ══════════════════════════════════════════════════════════ -->
+        <section id="add-staff-section">
+            <div class="dash-panel">
+                <div class="dash-panel-header">
+                    <h2 class="dash-panel-title">Add New Staff Member</h2>
+                </div>
+                <div class="dash-panel-body">
+                    <p style="margin-bottom:18px;color:#6B8E92;font-size:0.90rem;">
+                        Create a new Staff account. Staff members can view and manage customer bookings but cannot access the Admin panel.
+                    </p>
+                    <form action="admin/action" method="POST" class="dash-form" id="add-staff-form">
+                        <input type="hidden" name="action" value="addStaff">
+
+                        <div class="dash-form-group">
+                            <label for="staff-full-name">Full Name</label>
+                            <input type="text" id="staff-full-name" name="staffFullName"
+                                   class="dash-form-input" placeholder="e.g. Alex Johnson" required>
+                        </div>
+
+                        <div class="dash-form-row">
+                            <div class="dash-form-group">
+                                <label for="staff-email">Email Address</label>
+                                <input type="email" id="staff-email" name="staffEmail"
+                                       class="dash-form-input" placeholder="e.g. alex@globetrek.com" required>
+                            </div>
+                            <div class="dash-form-group">
+                                <label for="staff-password">Temporary Password</label>
+                                <input type="password" id="staff-password" name="staffPassword"
+                                       class="dash-form-input" placeholder="Min. 8 characters" minlength="8" required>
+                            </div>
+                        </div>
+
+                        <button type="submit" class="dash-form-submit" id="btn-add-staff">
+                            Create Staff Account
+                        </button>
+                    </form>
+                </div>
+            </div>
+        </section>
+
+        <!-- ══════════════════════════════════════════════════════════
+             SECTION 4: All Bookings Overview
+             ══════════════════════════════════════════════════════════ -->
+        <section id="bookings-section">
+            <div class="dash-panel">
+                <div class="dash-panel-header">
+                    <h2 class="dash-panel-title">All Bookings</h2>
+                </div>
+                <div class="dash-panel-body no-pad">
+                    <div class="dash-table-wrapper">
+                        <table class="dash-table" id="bookings-table">
+                            <thead>
+                                <tr>
+                                    <th>ID</th>
+                                    <th>Customer</th>
+                                    <th>Package</th>
+                                    <th>Destination</th>
+                                    <th>Price</th>
+                                    <th>Status</th>
+                                    <th>Booked On</th>
+                                    <th>Update</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {{bookingsTable}}
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+    </main>
+</div>
+</body>
+</html>

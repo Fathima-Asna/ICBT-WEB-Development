@@ -1,0 +1,3 @@
+# GlobeTrek Bookings Data File
+# Format: bookingId|customerEmail|packageName|destination|travelDate|travelers|specialNotes|status|submittedAt
+# ============================================================

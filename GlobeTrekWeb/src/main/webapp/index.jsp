@@ -1,0 +1,234 @@
+<%@ page contentType="text/html; charset=UTF-8" language="java" %>
+<%
+    // ── Read session for dynamic nav bar ──────────────────────────────────────
+    HttpSession sess = request.getSession(false);
+    String userRole  = (sess != null) ? (String) sess.getAttribute("userRole") : null;
+    String userName  = (sess != null) ? (String) sess.getAttribute("userFirstName") : null;
+    boolean loggedIn = (userRole != null);
+
+    // Determine dashboard link based on role
+    String dashboardLink = request.getContextPath() + "/login.jsp";
+    if ("Admin".equals(userRole))    dashboardLink = request.getContextPath() + "/admin-dashboard.jsp";
+    if ("Staff".equals(userRole))    dashboardLink = request.getContextPath() + "/staff/action";
+    if ("Customer".equals(userRole)) dashboardLink = request.getContextPath() + "/customer-dashboard.jsp";
+%>
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="Discover extraordinary travel experiences with GlobeTrek Adventures. Premium tour packages, luxury accommodations, and custom handcrafted itineraries.">
+    <title>GlobeTrek Adventures | Premium Travel &amp; Tour Agency</title>
+    
+    <!-- Link to single comprehensive stylesheet -->
+    <link rel="stylesheet" href="<%= request.getContextPath() %>/style.css">
+</head>
+<body>
+
+    <!-- --- STICKY NAVIGATION BAR --- -->
+    <header>
+        <div class="container header-container">
+            <!-- Brand Identity -->
+            <a href="<%= request.getContextPath() %>/index.jsp" class="brand" id="brand-home-link">
+                <!-- Premium SVG Compass Logo -->
+                <svg class="brand-logo-svg" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                    <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm0 18c-4.41 0-8-3.59-8-8s3.59-8 8-8 8 3.59 8 8-3.59 8-8 8zm1-13h-2v4H7v2h4v4h2v-4h4v-2h-4V7z"/>
+                </svg>
+                <h1 class="brand-name">GlobeTrek<span>Adventures</span></h1>
+            </a>
+
+            <!-- Checkbox Hack for Responsive Mobile Menu -->
+            <input type="checkbox" id="nav-toggle" class="nav-toggle-input">
+            
+            <label for="nav-toggle" class="nav-toggle-label" id="hamburger-menu-button">
+                <span></span>
+                <span></span>
+                <span></span>
+            </label>
+
+            <!-- Main Menu Links -->
+            <ul class="nav-menu" id="navigation-links">
+                <li><a href="<%= request.getContextPath() %>/index.jsp" class="nav-link active" id="nav-home">Home</a></li>
+                <li><a href="<%= request.getContextPath() %>/packages.html" class="nav-link" id="nav-packages">Packages</a></li>
+                <li><a href="<%= request.getContextPath() %>/accommodations.html" class="nav-link" id="nav-stays">Stays</a></li>
+                <li><a href="<%= request.getContextPath() %>/contact.html" class="nav-link" id="nav-contact">Contact</a></li>
+                <!-- Mobile Only Buttons -->
+                <% if (!loggedIn) { %>
+                <li class="mobile-only-link" style="display: none;"><a href="<%= request.getContextPath() %>/login.jsp" class="nav-link">Login</a></li>
+                <li class="mobile-only-link" style="display: none;"><a href="<%= request.getContextPath() %>/signup.jsp" class="nav-link">Sign Up</a></li>
+                <% } %>
+            </ul>
+
+            <!-- Call to Actions: Dynamic based on session -->
+            <div class="nav-cta" id="header-cta-buttons">
+                <% if (loggedIn) { %>
+                    <!-- Logged-in: show dashboard link + logout -->
+                    <a href="<%= dashboardLink %>" class="btn btn-outline" style="padding: 10px 22px; font-size: 0.85rem;" id="cta-dashboard">
+                        My Dashboard
+                    </a>
+                    <a href="<%= request.getContextPath() %>/logout" class="btn btn-primary" style="padding: 10px 22px; font-size: 0.85rem;" id="cta-logout">Sign Out</a>
+                <% } else { %>
+                    <!-- Guest: show login + signup -->
+                    <a href="<%= request.getContextPath() %>/login.jsp" class="btn btn-outline" style="padding: 10px 22px; font-size: 0.85rem;" id="cta-login">Login</a>
+                    <a href="<%= request.getContextPath() %>/signup.jsp" class="btn btn-primary" style="padding: 10px 22px; font-size: 0.85rem;" id="cta-signup">Sign Up</a>
+                <% } %>
+            </div>
+        </div>
+    </header>
+
+    <!-- --- HERO SECTION --- -->
+    <main>
+        <section class="hero" id="hero-section">
+            <div class="container">
+                <div class="hero-content">
+                    <h1>Wander Often.<br>Explore Always.</h1>
+                    <p>Handcrafting ultra-luxury, high-adventure itineraries for the curious traveler. Step off the beaten path and into the extraordinary.</p>
+                    <div class="hero-buttons">
+                        <a href="<%= request.getContextPath() %>/packages.html" class="btn btn-primary" id="hero-explore-btn">Explore Packages</a>
+                        <a href="<%= request.getContextPath() %>/contact.html" class="btn btn-secondary" id="hero-contact-btn">Tailor Your Trip</a>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- --- COMPANY PROFILE (WHY CHOOSE US) --- -->
+        <section class="section-padding" id="why-choose-us">
+            <div class="container">
+                <h2 class="decorated decorated-center mb-50">Why Choose GlobeTrek</h2>
+                
+                <div class="profile-grid">
+                    <!-- Pillar 1 -->
+                    <article class="profile-card" id="pillar-handcrafted">
+                        <div class="profile-card-icon">
+                            <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                                <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm1 17.93c-3.95-.49-7-3.85-7-7.93 0-.62.08-1.21.21-1.79L9 15v1c0 1.1.9 2 2 2v1.93zm6.9-2.53c-.26-.81-1-1.4-1.9-1.4h-1v-3c0-.55-.45-1-1-1h-6v-2h2c.55 0 1-.45 1-1V7h2c1.1 0 2-.9 2-2v-.41c2.93 1.19 5 4.06 5 7.41 0 2.08-.8 3.97-2.1 5.39z"/>
+                            </svg>
+                        </div>
+                        <h3>Handcrafted Itineraries</h3>
+                        <p>We do not believe in cookie-cutter tours. Every single package is manually designed by travel experts to highlight hidden gems and cultural secrets.</p>
+                    </article>
+
+                    <!-- Pillar 2 -->
+                    <article class="profile-card" id="pillar-guides">
+                        <div class="profile-card-icon">
+                            <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                                <path d="M12 12c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm0 2c-2.67 0-8 1.34-8 4v2h16v-2c0-2.66-5.33-4-8-4z"/>
+                            </svg>
+                        </div>
+                        <h3>Expert Local Guides</h3>
+                        <p>Unlock authentic perspectives. Our guides are local historians, naturalists, and creators who breathe life into every destination with rich storytelling.</p>
+                    </article>
+
+                    <!-- Pillar 3 -->
+                    <article class="profile-card" id="pillar-honest">
+                        <div class="profile-card-icon">
+                            <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                                <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm1 17h-2v-2h2v2zm2.07-7.75l-.9.92C13.45 12.9 13 13.5 13 15h-2v-.5c0-1.1.45-2.1 1.17-2.83l1.24-1.26c.37-.36.59-.86.59-1.41 0-1.1-.9-2-2-2s-2 .9-2 2H7c0-2.76 2.24-5 5-5s5 2.24 5 5c0 1.04-.42 1.99-1.07 2.75z"/>
+                            </svg>
+                        </div>
+                        <h3>Zero Hidden Costs</h3>
+                        <p>Premium hospitality means complete transparency. All park entries, luxury transfers, local feasts, and boutique stays are covered in your upfront price.</p>
+                    </article>
+                </div>
+            </div>
+        </section>
+
+        <!-- --- FEATURED ADVENTURES SHOWCASE PREVIEW --- -->
+        <section class="section-padding" style="background-color: var(--white);" id="packages-preview">
+            <div class="container text-center">
+                <h2 class="decorated decorated-center mb-50">Handcrafted Travel Experiences</h2>
+                <p style="max-width: 700px; margin: 0 auto 40px auto; font-size: 1.15rem; opacity: 0.85;">From snow-capped mountain hikes in Switzerland to private lagoon retreats in Bali, we design journeys that move you.</p>
+                <div class="hero-buttons" style="justify-content: center; gap: 30px;">
+                    <a href="<%= request.getContextPath() %>/packages.html" class="btn btn-primary" id="home-view-packages-btn">Browse Tour Packages</a>
+                    <a href="<%= request.getContextPath() %>/accommodations.html" class="btn btn-outline" id="home-view-stays-btn">Explore Curated Stays</a>
+                </div>
+            </div>
+        </section>
+
+        <!-- --- NEWSLETTER CTA BANNER --- -->
+        <section class="section-padding" style="background-color: var(--white);">
+            <div class="container">
+                <div class="newsletter-banner" id="newsletter-form-container">
+                    <h2>Join the Wanderlust Circle</h2>
+                    <p>Subscribe to receive curated secret trails, seasonal flight sales, and architectural stay recommendations directly in your inbox. No spam, ever.</p>
+                    <form action="<%= request.getContextPath() %>/contact.html" method="POST" class="footer-newsletter-form" style="max-width: 500px; margin: 0 auto;">
+                        <input type="email" placeholder="Enter your email address" class="footer-newsletter-input" required aria-label="Email Address for newsletter">
+                        <button type="submit" class="footer-newsletter-btn" id="newsletter-submit">Subscribe</button>
+                    </form>
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <!-- --- FOOTER --- -->
+    <footer>
+        <div class="container">
+            <div class="footer-grid">
+                <!-- Col 1: About -->
+                <div class="footer-col" id="footer-about">
+                    <h4>GlobeTrek</h4>
+                    <p>GlobeTrek Adventures designs bespoke journeys that inspire wonder, protect heritage, and respect natural ecosystems across the globe.</p>
+                    <div class="footer-socials">
+                        <a href="https://facebook.com" class="footer-social-icon" aria-label="Facebook Link">
+                            <svg viewBox="0 0 24 24"><path d="M19 3a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h14m-.5 15.5v-5.3a3.26 3.26 0 0 0-3.26-3.26c-.85 0-1.84.52-2.32 1.3v-1.11h-2.79v8.37h2.79v-4.93c0-.77.62-1.4 1.39-1.4a1.4 1.4 0 0 1 1.4 1.4v4.93h2.79z"/></svg>
+                        </a>
+                        <a href="https://instagram.com" class="footer-social-icon" aria-label="Instagram Link">
+                            <svg viewBox="0 0 24 24"><path d="M12 2.163c3.204 0 3.584.012 4.85.07 3.252.148 4.771 1.691 4.919 4.919.058 1.265.069 1.645.069 4.849 0 3.205-.012 3.584-.069 4.849-.149 3.225-1.664 4.771-4.919 4.919-1.266.058-1.644.07-4.85.07-3.204 0-3.584-.012-4.849-.07-3.26-.149-4.771-1.699-4.919-4.92-.058-1.265-.07-1.644-.07-4.849 0-3.204.013-3.583.07-4.849.149-3.227 1.664-4.771 4.919-4.919 1.266-.057 1.645-.069 4.849-.069zM12 0C8.741 0 8.333.014 7.053.072 2.695.272.273 2.69.073 7.051.014 8.333 0 8.741 0 12c0 3.259.014 3.668.072 4.948.2 4.358 2.618 6.78 6.98 6.98 1.281.058 1.689.072 4.948.072 3.259 0 3.668-.014 4.948-.072 4.354-.2 6.782-2.618 6.979-6.98.059-1.28.073-1.689.073-4.948 0-3.259-.014-3.667-.072-4.947-.196-4.354-2.617-6.78-6.979-6.98C15.668.014 15.259 0 12 0zm0 5.838a6.162 6.162 0 1 0 0 12.324 6.162 6.162 0 0 0 0-12.324zM12 16a4 4 0 1 1 0-8 4 4 0 0 1 0 8zm6.406-11.845a1.44 1.44 0 1 0 0 2.881 1.44 1.44 0 0 0 0-2.881z"/></svg>
+                        </a>
+                        <a href="https://twitter.com" class="footer-social-icon" aria-label="Twitter Link">
+                            <svg viewBox="0 0 24 24"><path d="M23.953 4.57a10 10 0 01-2.825.775 4.958 4.958 0 002.163-2.723c-.951.555-2.005.959-3.127 1.184a4.92 4.92 0 00-8.384 4.482C7.69 8.095 4.067 6.13 1.64 3.162a4.822 4.822 0 00-.666 2.475c0 1.71.87 3.213 2.188 4.096a4.904 4.904 0 01-2.228-.616v.06a4.923 4.923 0 003.946 4.827 4.996 4.996 0 01-2.212.085 4.936 4.936 0 004.604 3.417 9.867 9.867 0 01-6.102 2.105c-.39 0-.779-.023-1.17-.067a13.995 13.995 0 007.557 2.209c9.053 0 13.998-7.496 13.998-13.985 0-.21 0-.42-.015-.63A9.935 9.935 0 0024 4.59z"/></svg>
+                        </a>
+                    </div>
+                </div>
+
+                <!-- Col 2: Destinations -->
+                <div class="footer-col" id="footer-destinations">
+                    <h4>Destinations</h4>
+                    <ul class="footer-links">
+                        <li><a href="<%= request.getContextPath() %>/packages.html">Swiss Alps Peaks</a></li>
+                        <li><a href="<%= request.getContextPath() %>/packages.html">Bali &amp; Gili Islands</a></li>
+                        <li><a href="<%= request.getContextPath() %>/packages.html">Ancient Kyoto</a></li>
+                        <li><a href="<%= request.getContextPath() %>/packages.html">Patagonia Expeditions</a></li>
+                    </ul>
+                </div>
+
+                <!-- Col 3: Company -->
+                <div class="footer-col" id="footer-company">
+                    <h4>GlobeTrek Info</h4>
+                    <ul class="footer-links">
+                        <li><a href="<%= request.getContextPath() %>/index.jsp#why-choose-us">About Our Mission</a></li>
+                        <li><a href="<%= request.getContextPath() %>/contact.html">Contact Support</a></li>
+                        <li><a href="<%= request.getContextPath() %>/signup.jsp">Join Travel Club</a></li>
+                        <li><a href="<%= request.getContextPath() %>/login.jsp">Agency Login</a></li>
+                    </ul>
+                </div>
+
+                <!-- Col 4: Newsletter -->
+                <div class="footer-col" id="footer-newsletter">
+                    <h4>Newsletter</h4>
+                    <p>Get exclusive monthly escape itineraries, seasonal packages, and off-grid insights.</p>
+                    <form action="<%= request.getContextPath() %>/contact.html" method="POST" class="footer-newsletter-form">
+                        <input type="email" placeholder="Join our circle" class="footer-newsletter-input" required aria-label="Email address for subscription">
+                        <button type="submit" class="footer-newsletter-btn" aria-label="Submit newsletter">
+                            <svg viewBox="0 0 24 24" style="width: 16px; height: 16px; fill: var(--white);"><path d="M2.01 21L23 12 2.01 3 2 10l15 2-15 2z"/></svg>
+                        </button>
+                    </form>
+                </div>
+            </div>
+
+            <!-- Footer Bottom -->
+            <div class="footer-bottom">
+                <div class="footer-copyright">
+                    &copy; 2026 GlobeTrek Adventures Ltd. All rights reserved. Made with absolute care by Expert UI/UX.
+                </div>
+                <ul class="footer-policies">
+                    <li><a href="<%= request.getContextPath() %>/index.jsp#why-choose-us">Privacy Policy</a></li>
+                    <li><a href="<%= request.getContextPath() %>/index.jsp#why-choose-us">Terms of Service</a></li>
+                    <li><a href="<%= request.getContextPath() %>/index.jsp#why-choose-us">Sitemap</a></li>
+                </ul>
+            </div>
+        </div>
+    </footer>
+
+</body>
+</html>

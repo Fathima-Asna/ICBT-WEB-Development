@@ -1,0 +1,21 @@
+# Maven build output
+GlobeTrekWeb/target/
+
+# IDE files
+.idea/
+*.iml
+.vscode/
+*.swp
+*.swo
+*~
+
+# OS generated files
+.DS_Store
+Thumbs.db
+desktop.ini
+
+# Compiled class files
+*.class
+
+# Log files
+*.log

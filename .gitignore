@@ -1,26 +1,25 @@
-# Maven build output
-GlobeTrekWeb/target/
-
-# IDE files
-.idea/
-*.iml
-.vscode/
-*.swp
-*.swo
-*~
-
-# OS generated files
+# System Files
 .DS_Store
 Thumbs.db
-desktop.ini
 
-# Compiled class files
-*.class
+# IDEs/Editors
+.vscode/
+.idea/
+*.suo
+*.ntvs*
+*.njsproj
+*.sln
+*.swp
 
-# Log files
+# Local Server Log / Cache files
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+.pnpm-debug.log*
+logs/
 *.log
 
-# Deployment / temp files
-Dockerfile
-SetupDatabase.*
-mysql-connector-*.jar
+# Remote credential overrides (if any)
+.env
+.env.local
+.env.*.local

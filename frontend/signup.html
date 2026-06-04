@@ -1,0 +1,16 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Redirecting...</title>
+    <script>
+        // Forward URL query parameters to register tab on the unified join.html page
+        const search = window.location.search;
+        const prefix = search ? search + '&tab=register' : '?tab=register';
+        window.location.replace("join.html" + prefix);
+    </script>
+</head>
+<body>
+    <p>Redirecting to <a href="join.html?tab=register">Join Us</a>...</p>
+</body>
+</html>

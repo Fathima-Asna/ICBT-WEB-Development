@@ -1,2 +1,0 @@
-admin@globetrek.com|Admin@123|Admin|System|Administrator|luxury
-staff@globetrek.com|Staff@123|Staff|Jane|Smith|cultural

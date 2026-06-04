@@ -1,0 +1,132 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>GlobeTrek Adventures | Terms of Service</title>
+    
+    <link rel="stylesheet" href="style.css">
+    <!-- API Route Configuration -->
+    <script src="js/config.js"></script>
+    <!-- Theme Manager -->
+    <script src="js/theme.js"></script>
+</head>
+<body>
+
+<header>
+    <div class="nav-container page-wrapper">
+        <a href="index.html" class="logo" id="header-logo">
+            <span>Globe</span>Trek
+        </a>
+        
+        <button class="nav-toggle" id="nav-toggle" aria-label="Toggle navigation" onclick="toggleMobileMenu()">
+            <span></span>
+            <span></span>
+            <span></span>
+        </button>
+        
+        <ul class="nav-menu" id="nav-menu">
+            <li><a href="index.html" class="nav-link" id="nav-home">Home</a></li>
+            <li><a href="packages.html" class="nav-link" id="nav-packages">Packages</a></li>
+            <li><a href="accommodations.html" class="nav-link" id="nav-accommodations">Accommodations</a></li>
+            <li><a href="contact.html" class="nav-link" id="nav-contact">Contact</a></li>
+            
+            <li id="nav-auth-placeholder">
+                <a href="join.html" class="nav-link nav-btn" id="nav-join">Join Us</a>
+            </li>
+            <li>
+                <button id="theme-toggle" class="theme-toggle-btn" aria-label="Toggle theme" onclick="toggleTheme()">
+                    <svg class="sun-icon" xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="4"/><path d="M12 2v2M12 20v2M4.93 4.93l1.41 1.41M17.66 17.66l1.41 1.41M2 12h2M20 12h2M6.34 17.66l-1.41 1.41M19.07 4.93l-1.41 1.41"/></svg>
+                    <svg class="moon-icon" xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3a6 6 0 0 0 9 9 9 9 0 1 1-9-9Z"/></svg>
+                </button>
+            </li>
+        </ul>
+    </div>
+</header>
+
+<section class="page-banner" id="terms-banner">
+    <div class="banner-content page-wrapper animate-fade-in-up">
+        <h1>Terms of Service</h1>
+        <p>Understand your legal guidelines, transaction boundaries, and booking responsibilities as an explorer.</p>
+    </div>
+</section>
+
+<main class="page-wrapper animate-fade-in-up delay-1" style="max-width: 800px; margin: 0 auto 5rem auto; color: var(--text-dark); line-height: 1.8;">
+    <article class="card" style="padding: 3rem; border-color: var(--border-color); background-color: var(--bg-secondary);">
+        <h2 style="margin-bottom: 1.5rem; color: var(--accent-terracotta);">1. Agreement to Terms</h2>
+        <p style="color: var(--text-muted); margin-bottom: 2rem;">By accessing, searching, or reserving custom travel packages and hotel stay configurations through GlobeTrek Adventures, you establish absolute agreement with these terms.</p>
+
+        <h2 style="margin-bottom: 1.5rem; color: var(--accent-terracotta);">2. Booking & Payment Policies</h2>
+        <p style="color: var(--text-muted); margin-bottom: 2rem;">All package reservations are treated as booking inquiries until vetted and explicitly confirmed by GlobeTrek specialists. Calculated lodging prices represent dynamic estimations, which are re-calculated securely on our backend servers to prevent malicious client manipulation.</p>
+
+        <h2 style="margin-bottom: 1.5rem; color: var(--accent-terracotta);">3. Account Accountability & Security</h2>
+        <p style="color: var(--text-muted); margin-bottom: 2rem;">Explorer accounts require unique credentials. To preserve system security and booking integrity, users must not share accounts. Simultaneous active logins under the same username will result in the automated termination of older client sessions.</p>
+
+        <h2 style="margin-bottom: 1.5rem; color: var(--accent-terracotta);">4. User Limitations</h2>
+        <p style="color: var(--text-muted); margin-bottom: 2rem;">You agree not to bypass security configurations, perform automated search scrapes, or transmit malicious code payloads designed to compromise database queries or TiDB MySQL configurations.</p>
+
+        <h2 style="margin-bottom: 1.5rem; color: var(--accent-terracotta);">5. Alterations & Cancellations</h2>
+        <p style="color: var(--text-muted); mb-2">GlobeTrek Adventures reserves the right to cancel bookings or modify packages in instances of natural emergencies, scheduling conflicts, or billing discrepancies.</p>
+    </article>
+</main>
+
+<footer>
+    <div class="footer-grid page-wrapper">
+        <div class="footer-col footer-about">
+            <a href="index.html" class="logo" style="color: var(--text-light); font-size: 1.75rem;">
+                <span>Globe</span>Trek
+            </a>
+            <p>Empowering passionate travelers to discover world cultures through bespoke, premium guided tours and exquisite hand-selected accommodations.</p>
+        </div>
+        
+        <div class="footer-col">
+            <h3>Quick Links</h3>
+            <ul class="footer-links">
+                <li><a href="index.html">Home</a></li>
+                <li><a href="packages.html">Travel Packages</a></li>
+                <li><a href="accommodations.html">Accommodations</a></li>
+                <li><a href="contact.html">Contact Us</a></li>
+            </ul>
+        </div>
+
+        <div class="footer-col">
+            <h3>Support & Legal</h3>
+            <ul class="footer-links">
+                <li><a href="privacy.html">Privacy Policy</a></li>
+                <li><a href="terms.html">Terms of Service</a></li>
+                <li><a href="contact.html">Contact Support</a></li>
+            </ul>
+        </div>
+    </div>
+
+    <div class="footer-bottom page-wrapper">
+        <p>&copy; 2026 GlobeTrek Adventures. All rights reserved. (Academic Assessment Website)</p>
+    </div>
+</footer>
+
+<script>
+function toggleMobileMenu() {
+    const menu = document.getElementById('nav-menu');
+    const toggle = document.getElementById('nav-toggle');
+    menu.classList.toggle('active');
+    toggle.classList.toggle('open');
+}
+
+document.addEventListener('DOMContentLoaded', () => {
+    fetch(CONFIG.API_BASE_URL + '/check_session.php')
+        .then(res => res.json())
+        .then(data => {
+            const authPlaceholder = document.getElementById('nav-auth-placeholder');
+            if (data.logged_in) {
+                authPlaceholder.innerHTML = `
+                    <span style="color: var(--accent-sand); font-size: 0.9rem; margin-right: 1.25rem; font-weight: 600;">Hi, ${data.username}</span>
+                    <a href="${CONFIG.API_BASE_URL}/logout.php" class="nav-link nav-btn" style="background-color: var(--accent-terracotta); display: inline-block;">Log Out</a>
+                `;
+            }
+        })
+        .catch(err => console.error("Session sync failed:", err));
+});
+</script>
+
+</body>
+</html>

@@ -1,0 +1,268 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>GlobeTrek Adventures | Premium Curated Travel</title>
+    <!-- Meta tags for academic SEO standards -->
+    <meta name="description" content="Embark on premium curated journeys to Greece, Italy, Japan, and Switzerland. Secure booking and dynamic itineraries.">
+    <meta name="keywords" content="travel agency, tours, Amalfi, Kyoto, Santorini, Swiss Alps, luxury hotels">
+    <meta name="author" content="GlobeTrek Adventures">
+    
+    <!-- Custom Style Sheet -->
+    <link rel="stylesheet" href="style.css">
+    <!-- API Route Configuration -->
+    <script src="js/config.js"></script>
+    <!-- Theme Manager -->
+    <script src="js/theme.js"></script>
+</head>
+<body>
+
+<header>
+    <div class="nav-container page-wrapper">
+        <a href="index.html" class="logo" id="header-logo">
+            <span>Globe</span>Trek
+        </a>
+        
+        <button class="nav-toggle" id="nav-toggle" aria-label="Toggle navigation" onclick="toggleMobileMenu()">
+            <span></span>
+            <span></span>
+            <span></span>
+        </button>
+        
+        <ul class="nav-menu" id="nav-menu">
+            <li><a href="index.html" class="nav-link active" id="nav-home">Home</a></li>
+            <li><a href="packages.html" class="nav-link" id="nav-packages">Packages</a></li>
+            <li><a href="accommodations.html" class="nav-link" id="nav-accommodations">Accommodations</a></li>
+            <li><a href="contact.html" class="nav-link" id="nav-contact">Contact</a></li>
+            
+            <!-- Auth Items Placeholder -->
+            <li id="nav-auth-placeholder">
+                <a href="join.html" class="nav-link nav-btn" id="nav-join">Join Us</a>
+            </li>
+            
+            <li>
+                <button id="theme-toggle" class="theme-toggle-btn" aria-label="Toggle theme" onclick="toggleTheme()">
+                    <svg class="sun-icon" xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="4"/><path d="M12 2v2M12 20v2M4.93 4.93l1.41 1.41M17.66 17.66l1.41 1.41M2 12h2M20 12h2M6.34 17.66l-1.41 1.41M19.07 4.93l-1.41 1.41"/></svg>
+                    <svg class="moon-icon" xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3a6 6 0 0 0 9 9 9 9 0 1 1-9-9Z"/></svg>
+                </button>
+            </li>
+        </ul>
+    </div>
+</header>
+
+<main>
+    <!-- Hero Section -->
+    <section class="hero" id="home-hero">
+        <video autoplay loop muted playsinline class="hero-video">
+            <source src="https://assets.mixkit.co/videos/preview/mixkit-island-covered-with-trees-surrounded-by-ocean-43050-large.mp4" type="video/mp4">
+        </video>
+        <div class="hero-overlay"></div>
+        <div class="hero-content page-wrapper animate-fade-in-up">
+            <h1>Unveil the World's Wonders</h1>
+            <p>Experience hand-crafted premium travel packages and curated local accommodations. Completely customized journeys designed to inspire.</p>
+            <a href="packages.html" class="btn btn-primary" style="padding: 1rem 2rem; font-size: 1.1rem;" id="hero-cta-btn">Explore Packages</a>
+        </div>
+    </section>
+
+    <!-- Featured Packages Section -->
+    <section class="section page-wrapper">
+        <div class="section-header animate-fade-in-up">
+            <h2 class="section-title">Featured Journeys</h2>
+            <p class="section-subtitle">Exquisite itineraries compiled by our travel specialists</p>
+        </div>
+
+        <div class="grid-3" id="featured-packages-grid">
+            <!-- Package Card 1 -->
+            <article class="card animate-fade-in-up delay-1">
+                <div class="card-img-container">
+                    <span class="card-badge">7 Days, 6 Nights</span>
+                    <img src="https://images.unsplash.com/photo-1533900298318-6b8da08a523e?auto=format&fit=crop&w=800&q=80" alt="Amalfi Coast">
+                </div>
+                <div class="card-content">
+                    <div class="card-meta">
+                        <span class="card-meta-item">
+                            <svg class="icon-svg" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M20 10c0 6-8 12-8 12s-8-6-8-12a8 8 0 0 1 16 0Z"/><circle cx="12" cy="10" r="3"/></svg>
+                            Italy
+                        </span>
+                        <div class="star-rating" style="font-size: 0.9rem;">
+                            <svg class="star-svg" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg> <span style="color: var(--text-dark); font-weight:600;">4.9</span>
+                        </div>
+                    </div>
+                    <h3 class="card-title">Amalfi Coast Escape</h3>
+                    <p class="card-desc">Explore the vertical landscapes, cliffside gardens, and azure waters of the legendary Amalfi Coast. Visit Sorrento, Positano, and Ravello.</p>
+                    <div class="card-footer">
+                        <div class="card-price">$1,499.00 <span>/ person</span></div>
+                        <a href="packages.html" class="btn btn-secondary btn-sm" id="view-package-1">View Details</a>
+                    </div>
+                </div>
+            </article>
+
+            <!-- Package Card 2 -->
+            <article class="card animate-fade-in-up delay-2">
+                <div class="card-img-container">
+                    <span class="card-badge">6 Days, 5 Nights</span>
+                    <img src="https://images.unsplash.com/photo-1493976040374-85c8e12f0c0e?auto=format&fit=crop&w=800&q=80" alt="Kyoto">
+                </div>
+                <div class="card-content">
+                    <div class="card-meta">
+                        <span class="card-meta-item">
+                            <svg class="icon-svg" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M20 10c0 6-8 12-8 12s-8-6-8-12a8 8 0 0 1 16 0Z"/><circle cx="12" cy="10" r="3"/></svg>
+                            Japan
+                        </span>
+                        <div class="star-rating" style="font-size: 0.9rem;">
+                            <svg class="star-svg" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg> <span style="color: var(--text-dark); font-weight:600;">4.8</span>
+                        </div>
+                    </div>
+                    <h3 class="card-title">Kyoto Heritage & Zen</h3>
+                    <p class="card-desc">Immerse yourself in Japan's cultural heart. Wander through towering bamboo groves, participate in an authentic tea ceremony, and explore temples.</p>
+                    <div class="card-footer">
+                        <div class="card-price">$1,899.00 <span>/ person</span></div>
+                        <a href="packages.html" class="btn btn-secondary btn-sm" id="view-package-2">View Details</a>
+                    </div>
+                </div>
+            </article>
+
+            <!-- Package Card 3 -->
+            <article class="card animate-fade-in-up delay-3">
+                <div class="card-img-container">
+                    <span class="card-badge">5 Days, 4 Nights</span>
+                    <img src="https://images.unsplash.com/photo-1570077188670-e3a8d69ac5ff?auto=format&fit=crop&w=800&q=80" alt="Santorini">
+                </div>
+                <div class="card-content">
+                    <div class="card-meta">
+                        <span class="card-meta-item">
+                            <svg class="icon-svg" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M20 10c0 6-8 12-8 12s-8-6-8-12a8 8 0 0 1 16 0Z"/><circle cx="12" cy="10" r="3"/></svg>
+                            Greece
+                        </span>
+                        <div class="star-rating" style="font-size: 0.9rem;">
+                            <svg class="star-svg" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg> <span style="color: var(--text-dark); font-weight:600;">4.7</span>
+                        </div>
+                    </div>
+                    <h3 class="card-title">Santorini Sunset Odyssey</h3>
+                    <p class="card-desc">Indulge in a premium Greek Island retreat. Admire whitewashed houses overlooking the caldera, and witness the world-famous sunsets of Oia.</p>
+                    <div class="card-footer">
+                        <div class="card-price">$1,299.00 <span>/ person</span></div>
+                        <a href="packages.html" class="btn btn-secondary btn-sm" id="view-package-3">View Details</a>
+                    </div>
+                </div>
+            </article>
+        </div>
+    </section>
+
+    <!-- Blog / Travel Advice Section -->
+    <section class="section" style="background-color: var(--bg-secondary); border-top: 1px solid var(--border-color); border-bottom: 1px solid var(--border-color);">
+        <div class="page-wrapper">
+            <div class="section-header animate-fade-in-up">
+                <h2 class="section-title">Travel Hints & Advice</h2>
+                <p class="section-subtitle">Latest tips from our seasoned explorers</p>
+            </div>
+
+            <div class="grid-3" id="blog-grid">
+                <!-- Blog 1 -->
+                <article class="card animate-fade-in-up delay-1" style="box-shadow: none; border-color: var(--border-color);">
+                    <div class="card-img-container" style="height: 180px;">
+                        <img src="https://images.unsplash.com/photo-1522335789203-aabd1fc54bc9?auto=format&fit=crop&w=800&q=80" alt="Packing light">
+                    </div>
+                    <div class="card-content" style="padding: 1.25rem;">
+                        <span style="font-size: 0.8rem; font-weight: 700; color: var(--accent-terracotta); text-transform: uppercase;">By Sarah Jenkins</span>
+                        <h3 class="card-title" style="font-size: 1.2rem; margin: 0.5rem 0;">Mastering the Art of Light Packing</h3>
+                        <p class="card-desc" style="font-size: 0.9rem; margin-bottom: 1rem;">Packing light is the ultimate secret to stress-free travel. Choose a versatile neutral color scheme...</p>
+                        <a href="packages.html" class="btn btn-outline btn-sm" style="font-size: 0.85rem; padding: 0.5rem 1rem;" id="read-blog-1">Explore Tips</a>
+                    </div>
+                </article>
+
+                <!-- Blog 2 -->
+                <article class="card animate-fade-in-up delay-2" style="box-shadow: none; border-color: var(--border-color);">
+                    <div class="card-img-container" style="height: 180px;">
+                        <img src="https://images.unsplash.com/photo-1503899036084-c55cdd92da26?auto=format&fit=crop&w=800&q=80" alt="Kyoto temples">
+                    </div>
+                    <div class="card-content" style="padding: 1.25rem;">
+                        <span style="font-size: 0.8rem; font-weight: 700; color: var(--accent-terracotta); text-transform: uppercase;">By Takeshi Sato</span>
+                        <h3 class="card-title" style="font-size: 1.2rem; margin: 0.5rem 0;">Top 5 Hidden Gems in Kyoto, Japan</h3>
+                        <p class="card-desc" style="font-size: 0.9rem; margin-bottom: 1rem;">Discover Gio-ji Temple and Otagi Nenbutsu-ji whimsical statues hidden in Arashiyama forest...</p>
+                        <a href="packages.html" class="btn btn-outline btn-sm" style="font-size: 0.85rem; padding: 0.5rem 1rem;" id="read-blog-2">Explore Tips</a>
+                    </div>
+                </article>
+
+                <!-- Blog 3 -->
+                <article class="card animate-fade-in-up delay-3" style="box-shadow: none; border-color: var(--border-color);">
+                    <div class="card-img-container" style="height: 180px;">
+                        <img src="https://images.unsplash.com/photo-1488646953014-85cb44e25828?auto=format&fit=crop&w=800&q=80" alt="Travel guidelines">
+                    </div>
+                    <div class="card-content" style="padding: 1.25rem;">
+                        <span style="font-size: 0.8rem; font-weight: 700; color: var(--accent-terracotta); text-transform: uppercase;">By Marcus Vance</span>
+                        <h3 class="card-title" style="font-size: 1.2rem; margin: 0.5rem 0;">How to Avoid Travel Scams in Europe</h3>
+                        <p class="card-desc" style="font-size: 0.9rem; margin-bottom: 1rem;">Be aware of the bracelet scam and pickpocketing traps around high-traffic European transit terminals...</p>
+                        <a href="packages.html" class="btn btn-outline btn-sm" style="font-size: 0.85rem; padding: 0.5rem 1rem;" id="read-blog-3">Explore Tips</a>
+                    </div>
+                </article>
+            </div>
+        </div>
+    </section>
+</main>
+
+<!-- Footer -->
+<footer>
+    <div class="footer-grid page-wrapper">
+        <div class="footer-col footer-about">
+            <a href="index.html" class="logo" style="color: var(--text-light); font-size: 1.75rem;">
+                <span>Globe</span>Trek
+            </a>
+            <p>Empowering passionate travelers to discover world cultures through bespoke, premium guided tours and exquisite hand-selected accommodations.</p>
+        </div>
+        
+        <div class="footer-col">
+            <h3>Quick Links</h3>
+            <ul class="footer-links">
+                <li><a href="index.html" id="footer-link-home">Home</a></li>
+                <li><a href="packages.html" id="footer-link-packages">Travel Packages</a></li>
+                <li><a href="accommodations.html" id="footer-link-accommodations">Accommodations</a></li>
+                <li><a href="contact.html" id="footer-link-contact">Contact Us</a></li>
+            </ul>
+        </div>
+
+        <div class="footer-col">
+            <h3>Support & Legal</h3>
+            <ul class="footer-links">
+                <li><a href="privacy.html" id="footer-link-privacy">Privacy Policy</a></li>
+                <li><a href="terms.html" id="footer-link-terms">Terms of Service</a></li>
+                <li><a href="contact.html" id="footer-link-contact">Contact Support</a></li>
+            </ul>
+        </div>
+    </div>
+
+    <div class="footer-bottom page-wrapper">
+        <p>&copy; 2026 GlobeTrek Adventures. All rights reserved. (Academic Assessment Website)</p>
+        <p>Built completely from scratch. No templates. No frameworks.</p>
+    </div>
+</footer>
+
+<script>
+// Mobile Navigation Toggle
+function toggleMobileMenu() {
+    const menu = document.getElementById('nav-menu');
+    const toggle = document.getElementById('nav-toggle');
+    menu.classList.toggle('active');
+    toggle.classList.toggle('open');
+}
+
+// Session navbar synchronization
+document.addEventListener('DOMContentLoaded', () => {
+    fetch(CONFIG.API_BASE_URL + '/check_session.php')
+        .then(res => res.json())
+        .then(data => {
+            const authPlaceholder = document.getElementById('nav-auth-placeholder');
+            if (data.logged_in) {
+                authPlaceholder.innerHTML = `
+                    <span style="color: var(--accent-sand); font-size: 0.9rem; margin-right: 1.25rem; font-weight: 600;">Hi, ${data.username}</span>
+                    <a href="${CONFIG.API_BASE_URL}/logout.php" class="nav-link nav-btn" style="background-color: var(--accent-terracotta); display: inline-block;">Log Out</a>
+                `;
+            }
+        })
+        .catch(err => console.error("Session sync failed:", err));
+});
+</script>
+
+</body>
+</html>

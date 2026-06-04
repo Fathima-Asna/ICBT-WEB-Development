@@ -73,7 +73,8 @@ a {
 }
 
 html {
-    overflow-y: scroll;
+    scrollbar-gutter: stable;
+    overflow-y: auto;
     scroll-behavior: smooth;
 }
 

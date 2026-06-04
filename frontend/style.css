@@ -73,8 +73,7 @@ a {
 }
 
 html {
-    scrollbar-gutter: stable;
-    overflow-y: auto;
+    overflow-y: scroll; /* Force track permanently instead of gutter for maximum stability */
     scroll-behavior: smooth;
 }
 
@@ -88,6 +87,8 @@ body {
     min-height: 100vh;
     -webkit-font-smoothing: antialiased;
     transition: background-color 0.4s ease, color 0.4s ease;
+    width: 100%;
+    overflow-x: hidden;
     /* Reserve space for the fixed capsule header (72px + 2 * 1.25rem top/bottom gap) */
 }
 
@@ -119,13 +120,20 @@ main {
 /* ==========================================================================
    2. Floating Capsule Navbar  (position: fixed — eliminates vibration)
    ========================================================================== */
-header {
-    position: sticky;
-    top: 1.25rem;
-    margin: 1.25rem auto 2.5rem auto;
+.header-wrapper {
+    position: fixed;
+    top: 0;
     left: 0;
-    right: 0;
+    width: 100%;
+    display: flex;
+    justify-content: center;
     z-index: 1000;
+    pointer-events: none; /* Let clicks pass through empty space */
+}
+
+header {
+    pointer-events: auto; /* Re-enable clicks on the nav */
+    margin-top: 1.25rem;
     width: calc(100% - 3rem);
     max-width: 1200px;
     height: 72px;

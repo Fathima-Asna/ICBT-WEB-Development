@@ -87,6 +87,8 @@ body {
     min-height: 100vh;
     -webkit-font-smoothing: antialiased;
     transition: background-color 0.4s ease, color 0.4s ease;
+    /* Reserve space for the fixed capsule header (72px + 2 * 1.25rem top/bottom gap) */
+    padding-top: 112px;
 }
 
 .page-wrapper {
@@ -100,7 +102,7 @@ body {
 @keyframes pageFadeIn {
     from {
         opacity: 0;
-        transform: translateY(12px);
+        transform: translateY(18px);
     }
     to {
         opacity: 1;
@@ -110,27 +112,29 @@ body {
 
 main {
     flex: 1;
-    animation: pageFadeIn 0.5s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+    animation: pageFadeIn 0.55s cubic-bezier(0.22, 1, 0.36, 1) forwards;
 }
 
+
 /* ==========================================================================
-   2. Floating Capsule Navbar
+   2. Floating Capsule Navbar  (position: fixed — eliminates vibration)
    ========================================================================== */
 header {
-    position: sticky;
+    position: fixed;
     top: 1.25rem;
+    left: 50%;
+    transform: translateX(-50%);
     z-index: 1000;
-    margin: 1.5rem auto;
     width: calc(100% - 3rem);
     max-width: 1200px;
     height: 72px;
     background: var(--header-bg);
-    backdrop-filter: blur(16px) saturate(180%);
-    -webkit-backdrop-filter: blur(16px) saturate(180%);
+    backdrop-filter: blur(20px) saturate(180%);
+    -webkit-backdrop-filter: blur(20px) saturate(180%);
     border: 1px solid var(--header-border);
     border-radius: 50px;
-    box-shadow: 0 10px 40px rgba(0, 0, 0, 0.05);
-    transition: var(--transition);
+    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.06);
+    transition: background 0.4s ease, border-color 0.4s ease, box-shadow 0.4s ease;
 }
 
 .nav-container {
@@ -160,7 +164,7 @@ header {
     display: flex;
     align-items: center;
     list-style: none;
-    gap: 2rem;
+    gap: 1.75rem;
 }
 
 .nav-link {
@@ -168,16 +172,45 @@ header {
     font-weight: 500;
     font-size: 0.95rem;
     position: relative;
-    padding: 0.25rem 0.5rem;
+    padding: 0.35rem 0.65rem;
     border-radius: var(--radius-sm);
-    opacity: 0.85;
-    transition: var(--transition);
+    opacity: 0.8;
+    transition: color 0.3s ease, opacity 0.3s ease, background-color 0.3s ease;
+    text-decoration: none !important;
+    border-bottom: none !important;
+}
+
+/* Smooth animated underline on hover / active */
+.nav-link::after {
+    content: '';
+    position: absolute;
+    bottom: -2px;
+    left: 50%;
+    width: 0;
+    height: 2px;
+    background: var(--accent-terracotta);
+    border-radius: 2px;
+    transition: width 0.35s cubic-bezier(0.22, 1, 0.36, 1), left 0.35s cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+.nav-link:hover::after,
+.nav-link.active::after {
+    width: 60%;
+    left: 20%;
 }
 
 .nav-link:hover, .nav-link.active {
     opacity: 1;
     color: var(--accent-terracotta);
-    background-color: rgba(200, 122, 83, 0.05);
+    background-color: transparent;
+}
+
+/* Lock auth placeholder to prevent reflow when session swaps */
+#nav-auth-placeholder {
+    min-width: 100px;
+    display: flex;
+    align-items: center;
+    justify-content: flex-end;
 }
 
 .nav-btn {
@@ -187,6 +220,13 @@ header {
     border-radius: 50px;
     font-weight: 600;
     opacity: 1;
+    text-decoration: none !important;
+    border-bottom: none !important;
+}
+
+/* Override: no animated underline on CTA buttons */
+.nav-btn::after {
+    display: none !important;
 }
 
 .nav-btn:hover {
@@ -992,6 +1032,7 @@ footer {
     padding: 6rem 0 3rem 0;
     border-top: 1px solid var(--border-color);
     transition: background-color 0.4s ease;
+    animation: pageFadeIn 0.6s 0.15s cubic-bezier(0.22, 1, 0.36, 1) both;
 }
 
 .footer-grid {
@@ -1090,9 +1131,12 @@ footer {
 }
 
 @media (max-width: 768px) {
+    body {
+        padding-top: 88px;
+    }
+
     header {
         top: 0.5rem;
-        margin: 1rem auto;
         width: calc(100% - 1.5rem);
         border-radius: 24px;
     }
@@ -1116,12 +1160,29 @@ footer {
         padding: 2rem;
         gap: 1.5rem;
         border-radius: var(--radius-md);
-        box-shadow: var(--shadow-lg);
+        box-shadow: 0 12px 36px rgba(0, 0, 0, 0.15);
         border-top: 1px solid var(--border-color);
+        animation: mobileMenuSlide 0.35s cubic-bezier(0.22, 1, 0.36, 1) forwards;
+    }
+
+    @keyframes mobileMenuSlide {
+        from {
+            opacity: 0;
+            transform: translateY(-8px);
+        }
+        to {
+            opacity: 1;
+            transform: translateY(0);
+        }
     }
     
     .nav-menu.active {
         display: flex;
+    }
+
+    /* Remove animated underlines on mobile — they're hard to tap */
+    .nav-link::after {
+        display: none;
     }
     
     .hero h1 {

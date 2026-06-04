@@ -89,7 +89,6 @@ body {
     -webkit-font-smoothing: antialiased;
     transition: background-color 0.4s ease, color 0.4s ease;
     /* Reserve space for the fixed capsule header (72px + 2 * 1.25rem top/bottom gap) */
-    padding-top: 112px;
 }
 
 .page-wrapper {
@@ -121,11 +120,11 @@ main {
    2. Floating Capsule Navbar  (position: fixed — eliminates vibration)
    ========================================================================== */
 header {
-    position: fixed;
+    position: sticky;
     top: 1.25rem;
+    margin: 1.25rem auto 2.5rem auto;
     left: 0;
     right: 0;
-    margin: 0 auto;
     z-index: 1000;
     width: calc(100% - 3rem);
     max-width: 1200px;

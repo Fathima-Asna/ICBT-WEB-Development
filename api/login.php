@@ -38,8 +38,6 @@ try {
         $redirect = 'index.php';
         if ($user['role'] === 'admin') {
             $redirect = 'admin.php';
-        } elseif ($user['role'] === 'staff') {
-            $redirect = 'staff.php';
         } else {
             $redirect = 'dashboard.php';
         }

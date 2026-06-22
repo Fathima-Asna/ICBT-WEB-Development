@@ -112,10 +112,6 @@ function initForms() {
 
 // Admin Panels Event Bindings
 function initAdminForms() {
-    const addStaffForm = document.getElementById('add-staff-form');
-    if (addStaffForm) {
-        addStaffForm.addEventListener('submit', handleAddStaff);
-    }
     const addPackageForm = document.getElementById('add-package-form');
     if (addPackageForm) {
         addPackageForm.addEventListener('submit', handleAddPackage);
@@ -211,7 +207,7 @@ async function bookPackage(packageId, btn) {
     }
 }
 
-// 4. Staff Query Reply
+// 4. Admin Query Reply
 async function replyQuery(queryId, btn) {
     const row = btn.closest('tr');
     const replyInput = row.querySelector('.reply-input');
@@ -254,7 +250,7 @@ async function replyQuery(queryId, btn) {
     }
 }
 
-// 5. Staff Booking Status Toggler
+// 5. Admin Booking Status Toggler
 async function updateBookingStatus(bookingId, selectElement) {
     const originalValue = selectElement.dataset.originalVal || selectElement.value;
     selectElement.disabled = true;
@@ -287,7 +283,7 @@ async function updateBookingStatus(bookingId, selectElement) {
     }
 }
 
-// 6. Staff Package Editor
+// 6. Admin Package Editor
 async function savePackageEdit(packageId, btn) {
     const card = btn.closest('.package-row-edit-card');
     const destination = card.querySelector('.edit-dest').value.trim();
@@ -329,66 +325,6 @@ async function savePackageEdit(packageId, btn) {
 // -------------------------------------------------------------
 // Admin Management Actions
 // -------------------------------------------------------------
-
-// Add Staff Account (Admin only)
-async function handleAddStaff(e) {
-    e.preventDefault();
-    const form = e.target;
-    const btn = document.getElementById('btn-add-staff');
-    const usernameInput = document.getElementById('staff-username');
-    const passwordInput = document.getElementById('staff-password');
-    const username = usernameInput.value.trim();
-    const password = passwordInput.value;
-
-    setButtonLoading(btn, 'Creating...');
-
-    try {
-        const response = await fetch('api/add-staff.php', {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({ username, password })
-        });
-        const result = await response.json();
-
-        if (result.success) {
-            showToast(result.message, 'success');
-            usernameInput.value = '';
-            passwordInput.value = '';
-            setTimeout(() => { location.reload(); }, 1200);
-        } else {
-            showToast(result.message, 'error');
-        }
-    } catch (err) {
-        showToast('Network error. Please try again.', 'error');
-    } finally {
-        resetButtonLoading(btn);
-    }
-}
-
-// Delete Staff Account (Admin only)
-async function deleteStaff(staffId, btn) {
-    if (!confirm('Are you sure you want to delete this staff account?')) return;
-    setButtonLoading(btn, '...');
-    try {
-        const response = await fetch('api/delete-staff.php', {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({ staff_id: staffId })
-        });
-        const result = await response.json();
-        if (result.success) {
-            showToast(result.message, 'success');
-            const row = document.getElementById(`staff-row-${staffId}`);
-            if (row) row.remove();
-        } else {
-            showToast(result.message, 'error');
-        }
-    } catch (err) {
-        showToast('Network error.', 'error');
-    } finally {
-        resetButtonLoading(btn);
-    }
-}
 
 // Add Tour Package (Admin only)
 async function handleAddPackage(e) {

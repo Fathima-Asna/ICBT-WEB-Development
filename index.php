@@ -44,8 +44,6 @@ if (isset($_SESSION['user_id'])) {
                 <?php if (isset($_SESSION['role'])): ?>
                     <?php if ($_SESSION['role'] === 'customer'): ?>
                         <li><a href="dashboard.php" class="nav-link">My Dashboard</a></li>
-                    <?php elseif ($_SESSION['role'] === 'staff'): ?>
-                        <li><a href="staff.php" class="nav-link">Staff Space</a></li>
                     <?php elseif ($_SESSION['role'] === 'admin'): ?>
                         <li><a href="admin.php" class="nav-link">Admin Panel</a></li>
                     <?php endif; ?>
@@ -156,7 +154,7 @@ if (isset($_SESSION['user_id'])) {
                 </div>
                 <div>
                     <h4 style="color:var(--primary-color); font-size:1.2rem; font-weight:700; margin-bottom:0.5rem;">Secure Relational Operations</h4>
-                    <p style="color:var(--text-muted); font-size:0.95rem;">Our customer-first software stack secures your bookmarks and questions. Staff are instantly notified to reply to queries and handle booking updates.</p>
+                    <p style="color:var(--text-muted); font-size:0.95rem;">Our customer-first software stack secures your bookmarks and questions. Our team is instantly notified to reply to queries and handle booking updates.</p>
                 </div>
                 <div>
                     <h4 style="color:var(--primary-color); font-size:1.2rem; font-weight:700; margin-bottom:0.5rem;">Sustainable Travel</h4>
@@ -177,7 +175,7 @@ if (isset($_SESSION['user_id'])) {
                 <h4>Quick Links</h4>
                 <ul class="footer-links">
                     <li><a href="index.php">Browse Packages</a></li>
-                    <li><a href="login.php">Agent Sign In</a></li>
+                    <li><a href="login.php">Admin Sign In</a></li>
                 </ul>
             </div>
             <div class="footer-section">

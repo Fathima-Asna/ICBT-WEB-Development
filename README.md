@@ -18,24 +18,20 @@ graph TD
 
     %% User Roles routing
     Login --> AuthCustomer{Customer Session?}
-    Login --> AuthStaff{Staff Session?}
     Login --> AuthAdmin{Admin Session?}
 
     AuthCustomer -- Yes --> Dashboard[dashboard.php - Traveler Space]
-    AuthStaff -- Yes --> StaffSpace[staff.php - Administration Space]
-    AuthAdmin -- Yes --> AdminSpace[admin.php - System Analytics]
+    AuthAdmin -- Yes --> AdminSpace[admin.php - System Control & Analytics]
 
     %% Dashboards actions
     Dashboard --> Bookings[My Bookings]
     Dashboard --> Bookmarks[My Bookmarks]
     Dashboard --> MyQuestions[Question Logs]
 
-    StaffSpace --> ReplyQueries[Resolve Q&A Queries]
-    StaffSpace --> EditPackages[Update Package pricing/details]
-    StaffSpace --> BookingStatus[Confirm/Cancel Bookings]
-
     AdminSpace --> StatWidgets[Analytics Counters]
-    AdminSpace --> StaffManage[Create/Delete Staff Accounts]
+    AdminSpace --> ReplyQueries[Resolve Q&A Queries]
+    AdminSpace --> EditPackages[Update Package pricing/details]
+    AdminSpace --> BookingStatus[Confirm/Cancel Bookings]
     AdminSpace --> PackageManage[Create/Delete Package Catalog]
 ```
 
@@ -51,11 +47,9 @@ html_asna/
 │   ├── toggle-like.php         # Increments package likes dynamically
 │   ├── toggle-save.php         # Toggles package bookmarks (Saved Packages)
 │   ├── book-package.php        # Logs a new customer booking
-│   ├── submit-query.php        # Submits customer questions or staff responses
-│   ├── update-booking-status.php# Staff-controlled booking status updates
-│   ├── update-package.php      # Staff-controlled package content modifications
-│   ├── add-staff.php           # Admin-controlled staff registration
-│   ├── delete-staff.php        # Admin-controlled staff removal
+│   ├── submit-query.php        # Submits customer questions or admin responses
+│   ├── update-booking-status.php# Admin-controlled booking status updates
+│   ├── update-package.php      # Admin-controlled package content modifications
 │   ├── add-package.php         # Admin-controlled package creation
 │   └── delete-package.php      # Admin-controlled package deletion
 │
@@ -75,7 +69,6 @@ html_asna/
 ├── login.php                   # Secure credentials portal with role selection
 ├── logout.php                  # Destroys session variables and redirects
 ├── dashboard.php               # Customer Dashboard (My bookings, bookmarks, and queries status)
-├── staff.php                   # Travel Agency Staff Dashboard
 ├── admin.php                   # Administrator Dashboard
 └── schema.sql                  # MySQL Relational Database creation and seeds script
 ```
@@ -84,7 +77,7 @@ html_asna/
 
 ## 🎭 UML Use Case Diagram
 
-The system supports three user actors (`Traveler/Customer`, `Agency Staff`, `Administrator`) plus the generic `Guest` visitor.
+The system supports two user actors (`Traveler/Customer`, `Administrator`) plus the generic `Guest` visitor.
 
 ```mermaid
 flowchart LR
@@ -92,7 +85,6 @@ flowchart LR
     subgraph Actors [System User Roles]
         Guest["Guest User"]
         Customer["Traveler (Customer)"]
-        Staff["Agency Staff"]
         Admin["System Administrator"]
     end
 
@@ -107,7 +99,6 @@ flowchart LR
         UC_Reply("Reply to customer queries")
         UC_Status("Update booking statuses (Pending/Confirmed/Cancelled)")
         UC_EditPkg("Edit package pricing and descriptions")
-        UC_StaffManage("Manage Staff Credentials (CRUD)")
         UC_PkgCatalog("Manage Tour Catalog (Add/Delete Packages)")
         UC_Stats("View analytical stats and popularity reports")
     end
@@ -123,17 +114,12 @@ flowchart LR
     Customer --> UC_Ask
     Customer --> UC_Auth
 
-    Staff --> UC_Auth
-    Staff --> UC_Reply
-    Staff --> UC_Status
-    Staff --> UC_EditPkg
-
     Admin --> UC_Auth
-    Admin --> UC_StaffManage
-    Admin --> UC_PkgCatalog
-    Admin --> UC_Stats
+    Admin --> UC_Reply
     Admin --> UC_Status
     Admin --> UC_EditPkg
+    Admin --> UC_PkgCatalog
+    Admin --> UC_Stats
 ```
 
 ---
@@ -187,7 +173,7 @@ sequenceDiagram
     end
 ```
 
-### 3. Customer Inquiry & Staff Reply Sequence
+### 3. Customer Inquiry & Admin Reply Sequence
 ```mermaid
 sequenceDiagram
     autonumber
@@ -195,8 +181,8 @@ sequenceDiagram
     participant Contact as contact.php (JS)
     participant API as api/submit-query.php
     participant DB as config/db.php (MySQL)
-    actor Staff
-    participant StaffPage as staff.php
+    actor Admin
+    participant AdminPage as admin.php
     
     Traveler->>Contact: Select Package, type question, click "Send Inquiry"
     Contact->>API: POST request (JSON: { package_id, question_text })
@@ -205,17 +191,17 @@ sequenceDiagram
     API-->>Contact: JSON response { success: true }
     Contact-->>Traveler: Display success toast alert
     
-    %% Staff Reply Part
-    Staff->>StaffPage: Load staff workspace
-    StaffPage->>DB: Query queries table where status = 'Pending'
-    DB-->>StaffPage: Return pending questions list
-    StaffPage-->>Staff: Render questions with text reply fields
-    Staff->>StaffPage: Input response, click "Reply"
-    StaffPage->>API: POST response (JSON: { query_id, answer_text })
+    %% Admin Reply Part
+    Admin->>AdminPage: Load admin workspace
+    AdminPage->>DB: Query queries table where status = 'Pending'
+    DB-->>AdminPage: Return pending questions list
+    AdminPage-->>Admin: Render questions with text reply fields
+    Admin->>AdminPage: Input response, click "Reply"
+    AdminPage->>API: POST response (JSON: { query_id, answer_text })
     API->>DB: UPDATE queries SET answer_text = ?, status = 'Answered'
     DB-->>API: Success
-    API-->>StaffPage: JSON response { success: true }
-    StaffPage-->>Staff: Update UI badge status to "Answered"
+    API-->>AdminPage: JSON response { success: true }
+    AdminPage-->>Admin: Update UI badge status to "Answered"
 ```
 
 ---
@@ -225,9 +211,9 @@ sequenceDiagram
 The database `globetrek_db` contains five tables linked with appropriate constraints and cascading deletions:
 
 ```plaintext
-1. users: Stores travelers, travel agents, and administrators.
+1. users: Stores travelers and administrators.
    - id (INT, PRIMARY KEY, AUTO_INCREMENT)
-   - role (VARCHAR, CHECK: customer, staff, admin)
+   - role (VARCHAR, CHECK: customer, admin)
    - username (VARCHAR, UNIQUE)
    - password (VARCHAR)
 
@@ -245,7 +231,7 @@ The database `globetrek_db` contains five tables linked with appropriate constra
    - saved_at (TIMESTAMP)
    - PRIMARY KEY (user_id, package_id)
 
-4. queries: Relational table storing inquiries and staff resolutions.
+4. queries: Relational table storing inquiries and admin resolutions.
    - id (INT, PRIMARY KEY, AUTO_INCREMENT)
    - user_id (INT, FOREIGN KEY referencing users(id) ON DELETE CASCADE)
    - package_id (INT, FOREIGN KEY referencing packages(id) ON DELETE CASCADE)
@@ -298,5 +284,4 @@ Use the following seeded accounts to verify the different role access and dashbo
 | :--- | :--- | :--- | :--- | :--- |
 | **Guest** | *No Log In* | *No Password* | `index.php` / `packages.php` | Browse catalog, search packages. Clicking Like/Book/Star/Ask displays login warning toast. |
 | **Traveler (Customer)** | `traveler_srilanka` | `traveler123` | `dashboard.php` | Book packages, toggle likes, bookmark tours, submit Q&A package inquiries. View active bookings and query reply statuses. |
-| **Agency Staff** | `staff_negombo` | `staff123` | `staff.php` | Toggle booking status select dropdowns, reply inline to traveler inquiries, edit catalog package pricing/details. |
-| **Administrator** | `admin_globetrek` | `admin123` | `admin.php` | View analytical stat cards. Create/delete staff accounts, create/delete tour packages. |
+| **Administrator** | `admin_globetrek` | `admin123` | `admin.php` | View analytical stat cards, update booking status select dropdowns, reply inline to traveler inquiries, edit catalog package pricing/details, create/delete tour packages. |

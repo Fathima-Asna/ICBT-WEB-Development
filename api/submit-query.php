@@ -1,6 +1,6 @@
 <?php
 // api/submit-query.php
-// Processes user questions or logs replies from staff
+// Processes user questions or logs replies from admin
 
 session_start();
 require_once '../config/db.php';
@@ -21,12 +21,12 @@ $role = $_SESSION['role'];
 
 $input = json_decode(file_get_contents('php://input'), true);
 
-// Case 1: Staff/Admin replying to a query
+// Case 1: Admin replying to a query
 if (isset($input['query_id']) && isset($input['answer_text'])) {
-    if ($role !== 'staff' && $role !== 'admin') {
+    if ($role !== 'admin') {
         echo json_encode([
             'success' => false,
-            'message' => 'Unauthorized. Staff privilege required.'
+            'message' => 'Unauthorized. Administrator privilege required.'
         ]);
         exit;
     }

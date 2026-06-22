@@ -1,4 +1,4 @@
--- GlobeTrek Adventures Database Schema
+-- GlobeTrek Adventures Database Schema (Simplified: Customer & Admin)
 
 CREATE DATABASE IF NOT EXISTS globetrek_db;
 USE globetrek_db;
@@ -13,7 +13,7 @@ DROP TABLE IF EXISTS users;
 -- 1. Users Table
 CREATE TABLE users (
     id INT AUTO_INCREMENT PRIMARY KEY,
-    role VARCHAR(50) NOT NULL CHECK (role IN ('customer', 'staff', 'admin')),
+    role VARCHAR(50) NOT NULL CHECK (role IN ('customer', 'admin')),
     username VARCHAR(100) NOT NULL UNIQUE,
     password VARCHAR(255) NOT NULL
 );
@@ -65,7 +65,6 @@ CREATE TABLE bookings (
 -- Insert Initial Users (Plaintext for development/testing)
 INSERT INTO users (role, username, password) VALUES
 ('admin', 'admin_globetrek', 'admin123'),
-('staff', 'staff_negombo', 'staff123'),
 ('customer', 'traveler_srilanka', 'traveler123');
 
 -- Insert Premium Tour Packages in Negombo & Sri Lanka

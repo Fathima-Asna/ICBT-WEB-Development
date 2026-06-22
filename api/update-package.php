@@ -8,10 +8,10 @@ require_once '../config/db.php';
 header('Content-Type: application/json');
 
 // Check authentication and privileges
-if (!isset($_SESSION['user_id']) || ($_SESSION['role'] !== 'staff' && $_SESSION['role'] !== 'admin')) {
+if (!isset($_SESSION['user_id']) || $_SESSION['role'] !== 'admin') {
     echo json_encode([
         'success' => false,
-        'message' => 'Unauthorized. Staff or Admin privilege required.'
+        'message' => 'Unauthorized. Administrator privilege required.'
     ]);
     exit;
 }

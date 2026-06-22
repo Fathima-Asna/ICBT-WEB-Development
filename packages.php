@@ -44,8 +44,6 @@ if (isset($_SESSION['user_id'])) {
                 <?php if (isset($_SESSION['role'])): ?>
                     <?php if ($_SESSION['role'] === 'customer'): ?>
                         <li><a href="dashboard.php" class="nav-link">My Dashboard</a></li>
-                    <?php elseif ($_SESSION['role'] === 'staff'): ?>
-                        <li><a href="staff.php" class="nav-link">Staff Space</a></li>
                     <?php elseif ($_SESSION['role'] === 'admin'): ?>
                         <li><a href="admin.php" class="nav-link">Admin Panel</a></li>
                     <?php endif; ?>
@@ -143,7 +141,7 @@ if (isset($_SESSION['user_id'])) {
                 <h4>Quick Links</h4>
                 <ul class="footer-links">
                     <li><a href="index.php">Browse Packages</a></li>
-                    <li><a href="login.php">Agent Sign In</a></li>
+                    <li><a href="login.php">Admin Sign In</a></li>
                 </ul>
             </div>
             <div class="footer-section">

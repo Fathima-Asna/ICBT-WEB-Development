@@ -4,8 +4,6 @@ session_start();
 if (isset($_SESSION['role'])) {
     if ($_SESSION['role'] === 'admin') {
         header("Location: admin.php");
-    } elseif ($_SESSION['role'] === 'staff') {
-        header("Location: staff.php");
     } else {
         header("Location: dashboard.php");
     }
@@ -48,7 +46,6 @@ if (isset($_SESSION['role'])) {
                     <label class="form-label" for="role">Select Your Role</label>
                     <select class="form-control" id="role" name="role" required>
                         <option value="customer">Traveler (Customer)</option>
-                        <option value="staff">Agency Staff</option>
                         <option value="admin">Administrator</option>
                     </select>
                 </div>
@@ -79,7 +76,7 @@ if (isset($_SESSION['role'])) {
                 <h4>Quick Links</h4>
                 <ul class="footer-links">
                     <li><a href="index.php">Browse Packages</a></li>
-                    <li><a href="login.php">Agent Sign In</a></li>
+                    <li><a href="login.php">Admin Sign In</a></li>
                 </ul>
             </div>
             <div class="footer-section">

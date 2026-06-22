@@ -9,11 +9,7 @@ if (!isset($_SESSION['user_id']) || $_SESSION['role'] !== 'admin') {
 }
 
 try {
-    // 1. Fetch staff accounts
-    $stmt = $pdo->query("SELECT id, username, role FROM users WHERE role = 'staff' ORDER BY username ASC");
-    $staff_members = $stmt->fetchAll();
-
-    // 2. Fetch statistics
+    // 1. Fetch statistics
     // Total Customers
     $stmt = $pdo->query("SELECT COUNT(*) FROM users WHERE role = 'customer'");
     $total_customers = $stmt->fetchColumn();
@@ -30,16 +26,17 @@ try {
     $stmt = $pdo->query("SELECT SUM(likes_count) FROM packages");
     $total_likes = $stmt->fetchColumn() ?: 0;
 
-    // 3. Package Popularity Report (Likes, Bookmarks, and Bookings counts)
-    $report_sql = "
-        SELECT p.id, p.destination, p.price, p.likes_count,
-            (SELECT COUNT(*) FROM saved_packages WHERE package_id = p.id) AS bookmarks_count,
-            (SELECT COUNT(*) FROM bookings WHERE package_id = p.id) AS bookings_count
-        FROM packages p
-        ORDER BY p.likes_count DESC, bookings_count DESC
-    ";
-    $stmt = $pdo->query($report_sql);
-    $package_reports = $stmt->fetchAll();
+    // 2. Fetch queries (resolving customer questions)
+    $stmt = $pdo->query("SELECT q.*, u.username, p.destination FROM queries q JOIN users u ON q.user_id = u.id JOIN packages p ON q.package_id = p.id ORDER BY q.status ASC, q.created_at DESC");
+    $queries = $stmt->fetchAll();
+
+    // 3. Fetch bookings (managing traveler reservations)
+    $stmt = $pdo->query("SELECT b.*, u.username, p.destination, p.price FROM bookings b JOIN users u ON b.user_id = u.id JOIN packages p ON b.package_id = p.id ORDER BY b.booking_date DESC");
+    $bookings = $stmt->fetchAll();
+
+    // 4. Fetch packages (popularity report and inline modifications)
+    $stmt = $pdo->query("SELECT * FROM packages ORDER BY id ASC");
+    $packages = $stmt->fetchAll();
 
 } catch (\PDOException $e) {
     die("Error loading admin reports: " . $e->getMessage());
@@ -50,7 +47,7 @@ try {
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Admin Panel - GlobeTrek Adventures</title>
+    <title>Admin Dashboard - GlobeTrek Adventures</title>
     <link rel="stylesheet" href="css/style.css">
 </head>
 <body>
@@ -72,7 +69,7 @@ try {
 
     <!-- Main Workspace -->
     <main class="container">
-        <h2 class="section-title">Administrator System Analytics</h2>
+        <h2 class="section-title">Administrator System Control Panel</h2>
 
         <!-- Stat Cards Grid -->
         <div class="stats-grid">
@@ -96,53 +93,98 @@ try {
 
         <div class="dashboard-grid">
             
-            <!-- Staff Accounts List & Creator -->
+            <!-- Bookings Management -->
             <section class="dashboard-section">
-                <h3>Agency Staff Accounts</h3>
-                
-                <!-- Add Staff Form -->
-                <form id="add-staff-form" style="margin: 1.5rem 0; padding: 1.25rem; border: 1px solid var(--border-color); border-radius: var(--border-radius-md); background-color: var(--bg-color); display: flex; flex-wrap: wrap; gap: 1rem; align-items: flex-end;">
-                    <div class="form-group" style="margin-bottom:0; flex: 1; min-width: 150px;">
-                        <label class="form-label" style="font-size:0.8rem;">Staff Username</label>
-                        <input class="form-control" type="text" id="staff-username" placeholder="e.g. staff_ella" required style="padding:0.6rem;">
-                    </div>
-                    <div class="form-group" style="margin-bottom:0; flex: 1; min-width: 150px;">
-                        <label class="form-label" style="font-size:0.8rem;">Password</label>
-                        <input class="form-control" type="password" id="staff-password" placeholder="••••••••" required style="padding:0.6rem;">
-                    </div>
-                    <button class="btn-cta" type="submit" id="btn-add-staff" style="padding: 0.65rem 1.5rem; font-size: 0.9rem;">Add Agent</button>
-                </form>
-
+                <h3>Manage Traveler Bookings</h3>
                 <div class="data-table-wrapper">
-                    <?php if (count($staff_members) > 0): ?>
+                    <?php if (count($bookings) > 0): ?>
                         <table class="data-table">
                             <thead>
                                 <tr>
-                                    <th>User ID</th>
-                                    <th>Username</th>
-                                    <th>Assigned Role</th>
+                                    <th>Booking ID</th>
+                                    <th>Traveler</th>
+                                    <th>Package</th>
+                                    <th>Price</th>
+                                    <th>Date</th>
+                                    <th>Status</th>
                                     <th>Action</th>
                                 </tr>
                             </thead>
                             <tbody>
-                                <?php foreach ($staff_members as $member): ?>
-                                    <tr id="staff-row-<?= $member['id'] ?>">
-                                        <td>#<?= $member['id'] ?></td>
-                                        <td style="font-weight: 600;"><?= htmlspecialchars($member['username']) ?></td>
+                                <?php foreach ($bookings as $bk): ?>
+                                    <tr>
+                                        <td>#<?= $bk['id'] ?></td>
+                                        <td style="font-weight: 600;"><?= htmlspecialchars($bk['username']) ?></td>
+                                        <td><?= htmlspecialchars($bk['destination']) ?></td>
+                                        <td>$<?= number_format($bk['price'], 2) ?></td>
+                                        <td><?= date('Y-m-d H:i', strtotime($bk['booking_date'])) ?></td>
                                         <td>
-                                            <span class="badge" style="background-color: var(--primary-light); color: var(--primary-color);">
-                                                <?= htmlspecialchars($member['role']) ?>
+                                            <span class="badge badge-<?= strtolower($bk['status']) ?>">
+                                                <?= htmlspecialchars($bk['status']) ?>
                                             </span>
                                         </td>
                                         <td>
-                                            <button class="btn-secondary" style="padding:0.4rem 0.8rem; font-size:0.8rem; background-color:#fed7d7; color:#9b2c2c; border-color:rgba(229,62,62,0.1);" onclick="deleteStaff(<?= $member['id'] ?>, this)">Delete</button>
+                                            <select class="form-control" style="padding:0.4rem; font-size:0.85rem;" 
+                                                data-original-val="<?= htmlspecialchars($bk['status']) ?>" 
+                                                onchange="updateBookingStatus(<?= $bk['id'] ?>, this)">
+                                                <option value="Pending" <?= $bk['status'] === 'Pending' ? 'selected' : '' ?>>Pending</option>
+                                                <option value="Confirmed" <?= $bk['status'] === 'Confirmed' ? 'selected' : '' ?>>Confirmed</option>
+                                                <option value="Cancelled" <?= $bk['status'] === 'Cancelled' ? 'selected' : '' ?>>Cancelled</option>
+                                            </select>
                                         </td>
                                     </tr>
                                 <?php endforeach; ?>
                             </tbody>
                         </table>
                     <?php else: ?>
-                        <p style="color:var(--text-muted);">No staff accounts registered in the database.</p>
+                        <p style="color:var(--text-muted);">No bookings have been logged yet.</p>
+                    <?php endif; ?>
+                </div>
+            </section>
+
+            <!-- Customer Questions Resolution -->
+            <section class="dashboard-section">
+                <h3>Customer Questions & Inquiries</h3>
+                <div class="data-table-wrapper">
+                    <?php if (count($queries) > 0): ?>
+                        <table class="data-table">
+                            <thead>
+                                <tr>
+                                    <th>Traveler</th>
+                                    <th>Package</th>
+                                    <th>Question</th>
+                                    <th>Reply / Answer Status</th>
+                                    <th>Status</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <?php foreach ($queries as $q): ?>
+                                    <tr>
+                                        <td style="font-weight: 600;"><?= htmlspecialchars($q['username']) ?></td>
+                                        <td><?= htmlspecialchars($q['destination']) ?></td>
+                                        <td>"<?= htmlspecialchars($q['question_text']) ?>"</td>
+                                        <td class="answer-container">
+                                            <?php if ($q['status'] === 'Answered'): ?>
+                                                <span style="color:var(--success); font-weight:600">Replied:</span>
+                                                <span style="font-size:0.9rem; color:var(--text-muted);"><?= htmlspecialchars($q['answer_text']) ?></span>
+                                            <?php else: ?>
+                                                <div class="reply-group">
+                                                    <input class="form-control reply-input" type="text" placeholder="Type response..." style="padding: 0.5rem; font-size:0.85rem;" required>
+                                                    <button class="btn-cta" style="padding:0.5rem 1rem; font-size:0.8rem;" onclick="replyQuery(<?= $q['id'] ?>, this)">Reply</button>
+                                                </div>
+                                            <?php endif; ?>
+                                        </td>
+                                        <td>
+                                            <span class="badge badge-<?= strtolower($q['status']) ?>">
+                                                <?= htmlspecialchars($q['status']) ?>
+                                            </span>
+                                        </td>
+                                    </tr>
+                                <?php endforeach; ?>
+                            </tbody>
+                        </table>
+                    <?php else: ?>
+                        <p style="color:var(--text-muted);">No customer questions submitted yet.</p>
                     <?php endif; ?>
                 </div>
             </section>
@@ -173,38 +215,52 @@ try {
                 </form>
             </section>
 
-            <!-- Package Popularity Report & Deletion -->
+            <!-- Packages Modification & Reports -->
             <section class="dashboard-section">
-                <h3>Package Performance & Catalogue</h3>
-                <div class="data-table-wrapper">
-                    <table class="data-table">
-                        <thead>
-                            <tr>
-                                <th>Package ID</th>
-                                <th>Destination</th>
-                                <th>Price</th>
-                                <th>Likes count</th>
-                                <th>Bookmarks</th>
-                                <th>Bookings</th>
-                                <th>Action</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            <?php foreach ($package_reports as $rep): ?>
-                                <tr id="pkg-row-<?= $rep['id'] ?>">
-                                    <td>#<?= $rep['id'] ?></td>
-                                    <td style="font-weight: 600; color: var(--primary-color);"><?= htmlspecialchars($rep['destination']) ?></td>
-                                    <td>$<?= number_format($rep['price'], 2) ?></td>
-                                    <td style="font-weight: 600;">👍 <?= $rep['likes_count'] ?></td>
-                                    <td style="font-weight: 600; color: var(--accent-color);">★ <?= $rep['bookmarks_count'] ?></td>
-                                    <td style="font-weight: 600; color: var(--success);">✈️ <?= $rep['bookings_count'] ?></td>
-                                    <td>
-                                        <button class="btn-secondary" style="padding:0.4rem 0.8rem; font-size:0.8rem; background-color:#fed7d7; color:#9b2c2c; border-color:rgba(229,62,62,0.1);" onclick="deletePackage(<?= $rep['id'] ?>, this)">Delete</button>
-                                    </td>
-                                </tr>
-                            <?php endforeach; ?>
-                        </tbody>
-                    </table>
+                <h3>Manage Tour Catalog Details</h3>
+                <div style="margin-top: 1.5rem;">
+                    <?php foreach ($packages as $pkg): ?>
+                        <?php
+                            // Fetch metrics
+                            $stmt = $pdo->prepare("SELECT COUNT(*) FROM saved_packages WHERE package_id = ?");
+                            $stmt->execute([$pkg['id']]);
+                            $bmarks = $stmt->fetchColumn();
+
+                            $stmt = $pdo->prepare("SELECT COUNT(*) FROM bookings WHERE package_id = ?");
+                            $stmt->execute([$pkg['id']]);
+                            $bks = $stmt->fetchColumn();
+                        ?>
+                        <div class="package-row-edit-card" id="pkg-row-<?= $pkg['id'] ?>">
+                            <div style="display:flex; justify-content:space-between; align-items:center; border-bottom: 1px solid var(--border-color); padding-bottom: 0.75rem; margin-bottom: 1rem;">
+                                <h4 style="color:var(--primary-color); font-size:1.1rem; display:flex; align-items:center; gap:0.5rem; margin-bottom:0;">
+                                    <span>📦</span> Package #<?= $pkg['id'] ?> Details
+                                </h4>
+                                <div style="display:flex; gap:0.75rem; font-size:0.8rem; font-weight:600; color:var(--text-muted);">
+                                    <span>👍 <?= $pkg['likes_count'] ?> Likes</span> | 
+                                    <span>★ <?= $bmarks ?> Bookmarks</span> | 
+                                    <span>✈️ <?= $bks ?> Bookings</span>
+                                </div>
+                            </div>
+                            <div class="editor-form">
+                                <div class="form-group" style="margin-bottom:0;">
+                                    <label class="form-label" style="font-size:0.8rem;">Destination Title</label>
+                                    <input class="form-control edit-dest" type="text" value="<?= htmlspecialchars($pkg['destination']) ?>">
+                                </div>
+                                <div class="form-group" style="margin-bottom:0;">
+                                    <label class="form-label" style="font-size:0.8rem;">Price (USD)</label>
+                                    <input class="form-control edit-price" type="number" step="0.01" value="<?= htmlspecialchars($pkg['price']) ?>">
+                                </div>
+                                <div class="form-group" style="grid-column: 1 / -1; margin-bottom:0;">
+                                    <label class="form-label" style="font-size:0.8rem;">Description</label>
+                                    <textarea class="form-control edit-desc" rows="2" style="resize:vertical;"><?= htmlspecialchars($pkg['description']) ?></textarea>
+                                </div>
+                            </div>
+                            <div class="editor-form-footer" style="display:flex; justify-content:space-between; align-items:center; margin-top: 1.5rem;">
+                                <button class="btn-secondary" style="padding:0.6rem 1.2rem; font-size:0.85rem; background-color:#fed7d7; color:#9b2c2c; border-color:rgba(229,62,62,0.1);" onclick="deletePackage(<?= $pkg['id'] ?>, this)">Delete Package</button>
+                                <button class="btn-cta" style="font-size:0.85rem; padding:0.6rem 1.2rem;" onclick="savePackageEdit(<?= $pkg['id'] ?>, this)">Save Package Details</button>
+                            </div>
+                        </div>
+                    <?php endforeach; ?>
                 </div>
             </section>
 
@@ -222,7 +278,7 @@ try {
                 <h4>Quick Links</h4>
                 <ul class="footer-links">
                     <li><a href="index.php">Browse Packages</a></li>
-                    <li><a href="login.php">Agent Sign In</a></li>
+                    <li><a href="login.php">Admin Sign In</a></li>
                 </ul>
             </div>
             <div class="footer-section">

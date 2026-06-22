@@ -150,7 +150,7 @@ try {
                                                     <?= htmlspecialchars($q['answer_text']) ?>
                                                 </div>
                                             <?php else: ?>
-                                                <span style="color:var(--text-muted); font-style:italic;">Awaiting staff response...</span>
+                                                <span style="color:var(--text-muted); font-style:italic;">Awaiting response...</span>
                                             <?php endif; ?>
                                         </td>
                                         <td><?= date('Y-m-d H:i', strtotime($q['created_at'])) ?></td>
@@ -183,7 +183,7 @@ try {
                 <h4>Quick Links</h4>
                 <ul class="footer-links">
                     <li><a href="index.php">Browse Packages</a></li>
-                    <li><a href="login.php">Agent Sign In</a></li>
+                    <li><a href="login.php">Admin Sign In</a></li>
                 </ul>
             </div>
             <div class="footer-section">

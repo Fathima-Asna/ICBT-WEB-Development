@@ -87,48 +87,53 @@ html_asna/
 The system supports three user actors (`Traveler/Customer`, `Agency Staff`, `Administrator`) plus the generic `Guest` visitor.
 
 ```mermaid
-left-to-right direction
-actor Guest as "Guest User"
-actor Customer as "Traveler (Customer)"
-actor Staff as "Agency Staff"
-actor Admin as "System Administrator"
+flowchart LR
+    %% Actors
+    subgraph Actors [System User Roles]
+        Guest["Guest User"]
+        Customer["Traveler (Customer)"]
+        Staff["Agency Staff"]
+        Admin["System Administrator"]
+    end
 
-rectangle System {
-    usecase UC_Browse as "Browse featured/full tours catalog"
-    usecase UC_Like as "Like tour packages (Instant Counter)"
-    usecase UC_Bookmark as "Save/Bookmark packages for later"
-    usecase UC_Book as "Book travel package (Status: Confirmed)"
-    usecase UC_Ask as "Submit specific package queries"
-    usecase UC_Auth as "Role-based Sign In/Sign Out"
-    usecase UC_Reply as "Reply to customer queries"
-    usecase UC_Status as "Update booking statuses (Pending/Confirmed/Cancelled)"
-    usecase UC_EditPkg as "Edit package pricing and descriptions"
-    usecase UC_StaffManage as "Manage Staff Credentials (CRUD)"
-    usecase UC_PkgCatalog as "Manage Tour Catalog (Add/Delete Packages)"
-    usecase UC_Stats as "View analytical stats and popularity reports"
-}
+    %% Use Cases
+    subgraph System [GlobeTrek Adventures System]
+        UC_Browse("Browse featured/full tours catalog")
+        UC_Like("Like tour packages (Instant Counter)")
+        UC_Bookmark("Save/Bookmark packages for later")
+        UC_Book("Book travel package (Status: Confirmed)")
+        UC_Ask("Submit specific package queries")
+        UC_Auth("Role-based Sign In/Sign Out")
+        UC_Reply("Reply to customer queries")
+        UC_Status("Update booking statuses (Pending/Confirmed/Cancelled)")
+        UC_EditPkg("Edit package pricing and descriptions")
+        UC_StaffManage("Manage Staff Credentials (CRUD)")
+        UC_PkgCatalog("Manage Tour Catalog (Add/Delete Packages)")
+        UC_Stats("View analytical stats and popularity reports")
+    end
 
-Guest --> UC_Browse
-Guest --> UC_Auth
+    %% Relationships
+    Guest --> UC_Browse
+    Guest --> UC_Auth
 
-Customer --> UC_Browse
-Customer --> UC_Like
-Customer --> UC_Bookmark
-Customer --> UC_Book
-Customer --> UC_Ask
-Customer --> UC_Auth
+    Customer --> UC_Browse
+    Customer --> UC_Like
+    Customer --> UC_Bookmark
+    Customer --> UC_Book
+    Customer --> UC_Ask
+    Customer --> UC_Auth
 
-Staff --> UC_Auth
-Staff --> UC_Reply
-Staff --> UC_Status
-Staff --> UC_EditPkg
+    Staff --> UC_Auth
+    Staff --> UC_Reply
+    Staff --> UC_Status
+    Staff --> UC_EditPkg
 
-Admin --> UC_Auth
-Admin --> UC_StaffManage
-Admin --> UC_PkgCatalog
-Admin --> UC_Stats
-Admin --> UC_Status
-Admin --> UC_EditPkg
+    Admin --> UC_Auth
+    Admin --> UC_StaffManage
+    Admin --> UC_PkgCatalog
+    Admin --> UC_Stats
+    Admin --> UC_Status
+    Admin --> UC_EditPkg
 ```
 
 ---

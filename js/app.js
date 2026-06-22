@@ -3,6 +3,7 @@
 document.addEventListener('DOMContentLoaded', () => {
     initLoadingButtons();
     initForms();
+    initAdminForms();
 });
 
 // Toast System
@@ -44,7 +45,6 @@ function dismissToast(toast) {
 
 // Button Active State (Loading Animation)
 function initLoadingButtons() {
-    // Add generic loading behavior if clicked
     document.querySelectorAll('.btn-loading-action').forEach(btn => {
         btn.addEventListener('click', (e) => {
             setButtonLoading(btn);
@@ -71,7 +71,7 @@ function resetButtonLoading(btn) {
 
 // Form Handlers
 function initForms() {
-    // Single-input Query form on index.php
+    // Single-input Query form on package cards
     document.querySelectorAll('.package-query-form').forEach(form => {
         form.addEventListener('submit', async (e) => {
             e.preventDefault();
@@ -110,7 +110,21 @@ function initForms() {
     });
 }
 
-// Interactive API Calls
+// Admin Panels Event Bindings
+function initAdminForms() {
+    const addStaffForm = document.getElementById('add-staff-form');
+    if (addStaffForm) {
+        addStaffForm.addEventListener('submit', handleAddStaff);
+    }
+    const addPackageForm = document.getElementById('add-package-form');
+    if (addPackageForm) {
+        addPackageForm.addEventListener('submit', handleAddPackage);
+    }
+}
+
+// -------------------------------------------------------------
+// Interactive AJAX API Calls
+// -------------------------------------------------------------
 
 // 1. Dynamic Like System
 async function toggleLike(packageId, btn) {
@@ -124,7 +138,6 @@ async function toggleLike(packageId, btn) {
         const result = await response.json();
 
         if (result.success) {
-            // Update UI count
             const countSpan = btn.querySelector('.like-count');
             if (countSpan) {
                 countSpan.textContent = result.likes_count;
@@ -143,9 +156,6 @@ async function toggleLike(packageId, btn) {
 // 2. Bookmark / Save System
 async function toggleSave(packageId, btn) {
     const star = btn.querySelector('.star-icon');
-    const isSaved = btn.classList.contains('saved');
-    
-    // UI feedback spinner or color change
     btn.style.opacity = '0.5';
 
     try {
@@ -224,13 +234,11 @@ async function replyQuery(queryId, btn) {
 
         if (result.success) {
             showToast('Reply submitted successfully!', 'success');
-            // Refresh table or update row
             const badge = row.querySelector('.badge');
             if (badge) {
                 badge.className = 'badge badge-answered';
                 badge.textContent = 'Answered';
             }
-            // Update answer text visual representation
             const replyContainer = row.querySelector('.answer-container');
             if (replyContainer) {
                 replyContainer.innerHTML = `<em>Replied:</em> ${replyText}`;
@@ -262,7 +270,6 @@ async function updateBookingStatus(bookingId, selectElement) {
         if (result.success) {
             showToast('Booking status updated successfully!', 'success');
             selectElement.dataset.originalVal = selectElement.value;
-            // Update badge class in row
             const badge = selectElement.closest('tr').querySelector('.badge');
             if (badge) {
                 badge.className = `badge badge-${selectElement.value.toLowerCase()}`;
@@ -314,6 +321,135 @@ async function savePackageEdit(packageId, btn) {
         }
     } catch (err) {
         showToast('Network error, please try again.', 'error');
+    } finally {
+        resetButtonLoading(btn);
+    }
+}
+
+// -------------------------------------------------------------
+// Admin Management Actions
+// -------------------------------------------------------------
+
+// Add Staff Account (Admin only)
+async function handleAddStaff(e) {
+    e.preventDefault();
+    const form = e.target;
+    const btn = document.getElementById('btn-add-staff');
+    const usernameInput = document.getElementById('staff-username');
+    const passwordInput = document.getElementById('staff-password');
+    const username = usernameInput.value.trim();
+    const password = passwordInput.value;
+
+    setButtonLoading(btn, 'Creating...');
+
+    try {
+        const response = await fetch('api/add-staff.php', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ username, password })
+        });
+        const result = await response.json();
+
+        if (result.success) {
+            showToast(result.message, 'success');
+            usernameInput.value = '';
+            passwordInput.value = '';
+            setTimeout(() => { location.reload(); }, 1200);
+        } else {
+            showToast(result.message, 'error');
+        }
+    } catch (err) {
+        showToast('Network error. Please try again.', 'error');
+    } finally {
+        resetButtonLoading(btn);
+    }
+}
+
+// Delete Staff Account (Admin only)
+async function deleteStaff(staffId, btn) {
+    if (!confirm('Are you sure you want to delete this staff account?')) return;
+    setButtonLoading(btn, '...');
+    try {
+        const response = await fetch('api/delete-staff.php', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ staff_id: staffId })
+        });
+        const result = await response.json();
+        if (result.success) {
+            showToast(result.message, 'success');
+            const row = document.getElementById(`staff-row-${staffId}`);
+            if (row) row.remove();
+        } else {
+            showToast(result.message, 'error');
+        }
+    } catch (err) {
+        showToast('Network error.', 'error');
+    } finally {
+        resetButtonLoading(btn);
+    }
+}
+
+// Add Tour Package (Admin only)
+async function handleAddPackage(e) {
+    e.preventDefault();
+    const form = e.target;
+    const btn = document.getElementById('btn-add-pkg');
+    
+    const destination = document.getElementById('pkg-destination').value.trim();
+    const price = document.getElementById('pkg-price').value;
+    const imageUrl = document.getElementById('pkg-image').value.trim();
+    const description = document.getElementById('pkg-description').value.trim();
+
+    setButtonLoading(btn, 'Creating...');
+
+    try {
+        const response = await fetch('api/add-package.php', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({
+                destination,
+                price: parseFloat(price),
+                description,
+                image_url: imageUrl
+            })
+        });
+        const result = await response.json();
+
+        if (result.success) {
+            showToast(result.message, 'success');
+            form.reset();
+            setTimeout(() => { location.reload(); }, 1200);
+        } else {
+            showToast(result.message, 'error');
+        }
+    } catch (err) {
+        showToast('Network error. Please try again.', 'error');
+    } finally {
+        resetButtonLoading(btn);
+    }
+}
+
+// Delete Tour Package (Admin only)
+async function deletePackage(packageId, btn) {
+    if (!confirm('Are you sure you want to remove this package from the catalogue? This will delete all queries and bookings associated with it!')) return;
+    setButtonLoading(btn, '...');
+    try {
+        const response = await fetch('api/delete-package.php', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ package_id: packageId })
+        });
+        const result = await response.json();
+        if (result.success) {
+            showToast(result.message, 'success');
+            const row = document.getElementById(`pkg-row-${packageId}`);
+            if (row) row.remove();
+        } else {
+            showToast(result.message, 'error');
+        }
+    } catch (err) {
+        showToast('Network error.', 'error');
     } finally {
         resetButtonLoading(btn);
     }

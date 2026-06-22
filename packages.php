@@ -2,9 +2,9 @@
 session_start();
 require_once 'config/db.php';
 
-// Fetch top 3 featured packages (sorted by likes)
+// Fetch all packages
 try {
-    $stmt = $pdo->query("SELECT * FROM packages ORDER BY likes_count DESC LIMIT 3");
+    $stmt = $pdo->query("SELECT * FROM packages ORDER BY id ASC");
     $packages = $stmt->fetchAll();
 } catch (\PDOException $e) {
     die("Database query failed: " . $e->getMessage());
@@ -27,8 +27,8 @@ if (isset($_SESSION['user_id'])) {
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <meta name="description" content="Discover premium Sri Lankan adventures. Book custom packages in Negombo, Ella, and Sigiriya.">
-    <title>GlobeTrek Adventures - Sri Lankan Tours</title>
+    <meta name="description" content="Search and browse our premium Sri Lankan travel packages. Filter instantly and book securely.">
+    <title>Search Packages - GlobeTrek Adventures</title>
     <link rel="stylesheet" href="css/style.css">
 </head>
 <body>
@@ -38,8 +38,8 @@ if (isset($_SESSION['user_id'])) {
         <div class="nav-container">
             <a href="index.php" class="logo">GlobeTrek<span>.</span></a>
             <ul class="nav-menu">
-                <li><a href="index.php" class="nav-link active">Home</a></li>
-                <li><a href="packages.php" class="nav-link">Packages</a></li>
+                <li><a href="index.php" class="nav-link">Home</a></li>
+                <li><a href="packages.php" class="nav-link active">Packages</a></li>
                 <li><a href="contact.php" class="nav-link">Contact</a></li>
                 <?php if (isset($_SESSION['role'])): ?>
                     <?php if ($_SESSION['role'] === 'customer'): ?>
@@ -58,46 +58,29 @@ if (isset($_SESSION['user_id'])) {
         </div>
     </header>
 
-    <!-- Hero Section -->
-    <section class="hero">
+    <!-- Subpage Hero -->
+    <section class="hero" style="padding: 3.5rem 2rem;">
         <div class="hero-content">
-            <h1>Discover Sri Lanka's Untamed Beauty</h1>
-            <p>From historic Dutch canals in Negombo to ancient sky palaces in Sigiriya and scenic rail tours in Ella. Your premium getaway awaits.</p>
-            <a href="packages.php" class="btn-cta" style="font-size:1.1rem; padding: 1rem 2rem;">Explore All Packages</a>
+            <h1>Browse Our Premium Tours</h1>
+            <p>Use the search filter below to find your dream destination in Negombo and across Sri Lanka.</p>
         </div>
     </section>
 
-    <!-- Trust Badges / Stats -->
-    <section style="background-color: var(--white); border-bottom: 1px solid var(--border-color); padding: 3rem 2rem;">
-        <div class="container" style="padding: 0; display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 2rem; text-align: center;">
-            <div>
-                <h3 style="font-size: 2.5rem; color: var(--primary-color); font-weight: 800;">1,500+</h3>
-                <p style="color: var(--text-muted); font-weight: 500;">Happy Travelers</p>
-            </div>
-            <div>
-                <h3 style="font-size: 2.5rem; color: var(--primary-color); font-weight: 800;">15+</h3>
-                <p style="color: var(--text-muted); font-weight: 500;">Years of Curation</p>
-            </div>
-            <div>
-                <h3 style="font-size: 2.5rem; color: var(--primary-color); font-weight: 800;">4.9 ★</h3>
-                <p style="color: var(--text-muted); font-weight: 500;">Average Rating</p>
-            </div>
-        </div>
-    </section>
-
-    <!-- Featured Packages -->
+    <!-- Packages Browser Container -->
     <main class="container">
-        <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom: 2.5rem;">
-            <h2 class="section-title" style="margin-bottom:0;">Featured Tour Packages</h2>
-            <a href="packages.php" style="color: var(--primary-color); font-weight:700; border-bottom: 2px solid var(--accent-color); padding-bottom: 2px;">View All Packages &rarr;</a>
-        </div>
         
-        <div class="package-grid">
+        <!-- Search Bar Section -->
+        <div style="max-width: 600px; margin: 0 auto 3rem auto; text-align: center;">
+            <label class="form-label" style="font-weight: 600; font-size: 1rem; color: var(--primary-color);">Search Destinations</label>
+            <input class="form-control" type="text" id="search-input" placeholder="e.g. Ella, Sigiriya, Dutch Canals..." style="padding: 1rem 1.5rem; text-align: center; border-radius: var(--border-radius-lg); font-size: 1.1rem; box-shadow: var(--shadow-sm);">
+        </div>
+
+        <div class="package-grid" id="packages-list">
             <?php foreach ($packages as $pkg): ?>
                 <?php 
                     $is_saved = in_array($pkg['id'], $saved_packages);
                 ?>
-                <div class="package-card">
+                <div class="package-card" data-destination="<?= htmlspecialchars(strtolower($pkg['destination'])) ?>">
                     <div class="package-image-container">
                         <img class="package-image" src="<?= htmlspecialchars($pkg['image_url']) ?>" alt="<?= htmlspecialchars($pkg['destination']) ?>">
                         <div class="package-price-tag">$<?= number_format($pkg['price'], 2) ?></div>
@@ -135,7 +118,7 @@ if (isset($_SESSION['user_id'])) {
                         <form class="package-query-form" data-package-id="<?= $pkg['id'] ?>">
                             <label style="font-size: 0.8rem; font-weight: 600; color: var(--text-muted);">Ask a Question about this Package</label>
                             <div class="query-input-group">
-                                <input class="query-input" type="text" placeholder="Is lunch included?" required>
+                                <input class="query-input" type="text" placeholder="Is transport from Colombo included?" required>
                                 <button class="btn-secondary" type="submit" style="padding: 0.5rem 1rem;">Ask</button>
                             </div>
                         </form>
@@ -143,28 +126,11 @@ if (isset($_SESSION['user_id'])) {
                 </div>
             <?php endforeach; ?>
         </div>
-    </main>
 
-    <!-- Why Us Section -->
-    <section style="background-color: var(--white); padding: 5rem 2rem;">
-        <div class="container" style="padding:0;">
-            <h2 class="section-title">Why Travel With GlobeTrek?</h2>
-            <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 3rem; margin-top: 3rem;">
-                <div>
-                    <h4 style="color:var(--primary-color); font-size:1.2rem; font-weight:700; margin-bottom:0.5rem;">Authentic Local Curators</h4>
-                    <p style="color:var(--text-muted); font-size:0.95rem;">Our guides and experts reside in Negombo and the hill country, ensuring you see the authentic side of Sri Lanka away from commercial crowds.</p>
-                </div>
-                <div>
-                    <h4 style="color:var(--primary-color); font-size:1.2rem; font-weight:700; margin-bottom:0.5rem;">Secure Relational Operations</h4>
-                    <p style="color:var(--text-muted); font-size:0.95rem;">Our customer-first software stack secures your bookmarks and questions. Staff are instantly notified to reply to queries and handle booking updates.</p>
-                </div>
-                <div>
-                    <h4 style="color:var(--primary-color); font-size:1.2rem; font-weight:700; margin-bottom:0.5rem;">Sustainable Travel</h4>
-                    <p style="color:var(--text-muted); font-size:0.95rem;">We support Negombo lagoon preservation efforts and hire local boats and trains, keeping your travel footprint low and community impact high.</p>
-                </div>
-            </div>
+        <div id="no-results-msg" style="display: none; text-align: center; padding: 4rem; color: var(--text-muted);">
+            <p style="font-size: 1.2rem;">No tour packages match your search term.</p>
         </div>
-    </section>
+    </main>
 
     <!-- Footer -->
     <footer>
@@ -192,5 +158,32 @@ if (isset($_SESSION['user_id'])) {
 
     <!-- Scripts -->
     <script src="js/app.js"></script>
+    <script>
+        // Client-side instant package search filter
+        const searchInput = document.getElementById('search-input');
+        const cards = document.querySelectorAll('.package-card');
+        const noResults = document.getElementById('no-results-msg');
+
+        searchInput.addEventListener('input', () => {
+            const query = searchInput.value.toLowerCase().trim();
+            let visibleCount = 0;
+
+            cards.forEach(card => {
+                const dest = card.dataset.destination;
+                if (dest.includes(query)) {
+                    card.style.display = 'flex';
+                    visibleCount++;
+                } else {
+                    card.style.display = 'none';
+                }
+            });
+
+            if (visibleCount === 0) {
+                noResults.style.display = 'block';
+            } else {
+                noResults.style.display = 'none';
+            }
+        });
+    </script>
 </body>
 </html>

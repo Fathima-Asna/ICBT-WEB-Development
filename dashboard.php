@@ -46,6 +46,8 @@ try {
             <a href="index.php" class="logo">GlobeTrek<span>.</span></a>
             <ul class="nav-menu">
                 <li><a href="index.php" class="nav-link">Home</a></li>
+                <li><a href="packages.php" class="nav-link">Packages</a></li>
+                <li><a href="contact.php" class="nav-link">Contact</a></li>
                 <li><a href="dashboard.php" class="nav-link active">My Dashboard</a></li>
                 <li><span class="user-tag"><?= htmlspecialchars($_SESSION['username']) ?></span></li>
                 <li><a href="logout.php" class="btn-secondary" style="padding: 0.5rem 1rem;">Logout</a></li>

@@ -50,7 +50,7 @@ try {
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Admin Dashboard - GlobeTrek Adventures</title>
+    <title>Admin Panel - GlobeTrek Adventures</title>
     <link rel="stylesheet" href="css/style.css">
 </head>
 <body>
@@ -61,7 +61,9 @@ try {
             <a href="index.php" class="logo">GlobeTrek<span>.</span></a>
             <ul class="nav-menu">
                 <li><a href="index.php" class="nav-link">Home</a></li>
-                <li><a href="admin.php" class="nav-link active">Admin Space</a></li>
+                <li><a href="packages.php" class="nav-link">Packages</a></li>
+                <li><a href="contact.php" class="nav-link">Contact</a></li>
+                <li><a href="admin.php" class="nav-link active">Admin Panel</a></li>
                 <li><span class="user-tag">Admin: <?= htmlspecialchars($_SESSION['username']) ?></span></li>
                 <li><a href="logout.php" class="btn-secondary" style="padding: 0.5rem 1rem;">Logout</a></li>
             </ul>
@@ -94,40 +96,23 @@ try {
 
         <div class="dashboard-grid">
             
-            <!-- Package Popularity Report -->
-            <section class="dashboard-section">
-                <h3>Package Performance & Popularity Report</h3>
-                <div class="data-table-wrapper">
-                    <table class="data-table">
-                        <thead>
-                            <tr>
-                                <th>Package ID</th>
-                                <th>Destination</th>
-                                <th>Price</th>
-                                <th>Likes count</th>
-                                <th>Bookmarks count</th>
-                                <th>Bookings count</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            <?php foreach ($package_reports as $rep): ?>
-                                <tr>
-                                    <td>#<?= $rep['id'] ?></td>
-                                    <td style="font-weight: 600; color: var(--primary-color);"><?= htmlspecialchars($rep['destination']) ?></td>
-                                    <td>$<?= number_format($rep['price'], 2) ?></td>
-                                    <td style="font-weight: 600;">👍 <?= $rep['likes_count'] ?></td>
-                                    <td style="font-weight: 600; color: var(--accent-color);">★ <?= $rep['bookmarks_count'] ?></td>
-                                    <td style="font-weight: 600; color: var(--success);">✈️ <?= $rep['bookings_count'] ?></td>
-                                </tr>
-                            <?php endforeach; ?>
-                        </tbody>
-                    </table>
-                </div>
-            </section>
-
-            <!-- Staff Accounts List -->
+            <!-- Staff Accounts List & Creator -->
             <section class="dashboard-section">
                 <h3>Agency Staff Accounts</h3>
+                
+                <!-- Add Staff Form -->
+                <form id="add-staff-form" style="margin: 1.5rem 0; padding: 1.25rem; border: 1px solid var(--border-color); border-radius: var(--border-radius-md); background-color: var(--bg-color); display: flex; flex-wrap: wrap; gap: 1rem; align-items: flex-end;">
+                    <div class="form-group" style="margin-bottom:0; flex: 1; min-width: 150px;">
+                        <label class="form-label" style="font-size:0.8rem;">Staff Username</label>
+                        <input class="form-control" type="text" id="staff-username" placeholder="e.g. staff_ella" required style="padding:0.6rem;">
+                    </div>
+                    <div class="form-group" style="margin-bottom:0; flex: 1; min-width: 150px;">
+                        <label class="form-label" style="font-size:0.8rem;">Password</label>
+                        <input class="form-control" type="password" id="staff-password" placeholder="••••••••" required style="padding:0.6rem;">
+                    </div>
+                    <button class="btn-cta" type="submit" id="btn-add-staff" style="padding: 0.65rem 1.5rem; font-size: 0.9rem;">Add Agent</button>
+                </form>
+
                 <div class="data-table-wrapper">
                     <?php if (count($staff_members) > 0): ?>
                         <table class="data-table">
@@ -136,17 +121,21 @@ try {
                                     <th>User ID</th>
                                     <th>Username</th>
                                     <th>Assigned Role</th>
+                                    <th>Action</th>
                                 </tr>
                             </thead>
                             <tbody>
                                 <?php foreach ($staff_members as $member): ?>
-                                    <tr>
+                                    <tr id="staff-row-<?= $member['id'] ?>">
                                         <td>#<?= $member['id'] ?></td>
                                         <td style="font-weight: 600;"><?= htmlspecialchars($member['username']) ?></td>
                                         <td>
                                             <span class="badge" style="background-color: var(--primary-light); color: var(--primary-color);">
                                                 <?= htmlspecialchars($member['role']) ?>
                                             </span>
+                                        </td>
+                                        <td>
+                                            <button class="btn-secondary" style="padding:0.4rem 0.8rem; font-size:0.8rem; background-color:#fed7d7; color:#9b2c2c; border-color:rgba(229,62,62,0.1);" onclick="deleteStaff(<?= $member['id'] ?>, this)">Delete</button>
                                         </td>
                                     </tr>
                                 <?php endforeach; ?>
@@ -155,6 +144,67 @@ try {
                     <?php else: ?>
                         <p style="color:var(--text-muted);">No staff accounts registered in the database.</p>
                     <?php endif; ?>
+                </div>
+            </section>
+
+            <!-- Package Creator Form -->
+            <section class="dashboard-section">
+                <h3>Add New Tour Package</h3>
+                <form id="add-package-form" style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 1.5rem; margin-top: 1.5rem; padding: 1.25rem; border: 1px solid var(--border-color); border-radius: var(--border-radius-md); background-color: var(--bg-color);">
+                    <div class="form-group" style="margin-bottom:0;">
+                        <label class="form-label" style="font-size:0.8rem;">Destination Title</label>
+                        <input class="form-control" id="pkg-destination" type="text" placeholder="e.g. Galle Fort Day Tour" required>
+                    </div>
+                    <div class="form-group" style="margin-bottom:0;">
+                        <label class="form-label" style="font-size:0.8rem;">Price (USD)</label>
+                        <input class="form-control" id="pkg-price" type="number" step="0.01" placeholder="e.g. 85.00" required>
+                    </div>
+                    <div class="form-group" style="margin-bottom:0;">
+                        <label class="form-label" style="font-size:0.8rem;">Image URL (Optional)</label>
+                        <input class="form-control" id="pkg-image" type="text" placeholder="images/negombo_lagoon.jpg">
+                    </div>
+                    <div class="form-group" style="grid-column: 1 / -1; margin-bottom:0;">
+                        <label class="form-label" style="font-size:0.8rem;">Description</label>
+                        <textarea class="form-control" id="pkg-description" rows="2" placeholder="Describe the tour details..." required></textarea>
+                    </div>
+                    <div style="grid-column: 1 / -1; display:flex; justify-content:flex-end;">
+                        <button class="btn-cta" type="submit" id="btn-add-pkg" style="font-size:0.85rem; padding:0.6rem 1.2rem;">Create Package</button>
+                    </div>
+                </form>
+            </section>
+
+            <!-- Package Popularity Report & Deletion -->
+            <section class="dashboard-section">
+                <h3>Package Performance & Catalogue</h3>
+                <div class="data-table-wrapper">
+                    <table class="data-table">
+                        <thead>
+                            <tr>
+                                <th>Package ID</th>
+                                <th>Destination</th>
+                                <th>Price</th>
+                                <th>Likes count</th>
+                                <th>Bookmarks</th>
+                                <th>Bookings</th>
+                                <th>Action</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <?php foreach ($package_reports as $rep): ?>
+                                <tr id="pkg-row-<?= $rep['id'] ?>">
+                                    <td>#<?= $rep['id'] ?></td>
+                                    <td style="font-weight: 600; color: var(--primary-color);"><?= htmlspecialchars($rep['destination']) ?></td>
+                                    <td>$<?= number_format($rep['price'], 2) ?></td>
+                                    <td style="font-weight: 600;">👍 <?= $rep['likes_count'] ?></td>
+                                    <td style="font-weight: 600; color: var(--accent-color);">★ <?= $rep['bookmarks_count'] ?></td>
+                                    <td style="font-weight: 600; color: var(--success);">✈️ <?= $rep['bookings_count'] ?></td>
+                                    <td>
+                                        <button class="btn-secondary" style="padding:0.4rem 0.8rem; font-size:0.8rem; background-color:#fed7d7; color:#9b2c2c; border-color:rgba(229,62,62,0.1);" onclick="deletePackage(<?= $rep['id'] ?>, this)">Delete</button>
+                                    </td>
+                                </tr>
+                            <?php endforeach; ?>
+                        </tbody>
+                    </table>
                 </div>
             </section>
 

@@ -28,6 +28,8 @@ if (isset($_SESSION['role'])) {
             <a href="index.php" class="logo">GlobeTrek<span>.</span></a>
             <ul class="nav-menu">
                 <li><a href="index.php" class="nav-link">Home</a></li>
+                <li><a href="packages.php" class="nav-link">Packages</a></li>
+                <li><a href="contact.php" class="nav-link">Contact</a></li>
                 <li><a href="login.php" class="nav-link active">Sign In</a></li>
             </ul>
         </div>

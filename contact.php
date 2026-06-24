@@ -44,6 +44,18 @@ try {
         </div>
     </header>
 
+    <!-- Alert Notices -->
+    <?php if (isset($_GET['error'])): ?>
+        <div style="background-color: #fed7d7; color: #9b2c2c; padding: 1rem; text-align: center; font-weight: 600; border-bottom: 1px solid #feb2b2;">
+            <?= htmlspecialchars($_GET['error']) ?>
+        </div>
+    <?php endif; ?>
+    <?php if (isset($_GET['success'])): ?>
+        <div style="background-color: #c6f6d5; color: #22543d; padding: 1rem; text-align: center; font-weight: 600; border-bottom: 1px solid #9ae6b4;">
+            <?= htmlspecialchars($_GET['success']) ?>
+        </div>
+    <?php endif; ?>
+
     <!-- Hero -->
     <section class="hero" style="padding: 3.5rem 2rem;">
         <div class="hero-content">
@@ -80,11 +92,11 @@ try {
             <!-- Inquiry submission form -->
             <div class="dashboard-section">
                 <h3>Submit an Inquiry</h3>
-                <form id="contact-inquiry-form" style="margin-top: 1.5rem; display:flex; flex-direction:column; gap:1.5rem;">
+                <form id="contact-inquiry-form" method="POST" action="api/submit-query.php" style="margin-top: 1.5rem; display:flex; flex-direction:column; gap:1.5rem;">
                     
                     <div class="form-group" style="margin-bottom:0;">
                         <label class="form-label" for="pkg-select">Select Tour Package</label>
-                        <select class="form-control" id="pkg-select" required>
+                        <select class="form-control" id="pkg-select" name="package_id" required>
                             <option value="">-- Choose a Package --</option>
                             <?php foreach ($packages as $pkg): ?>
                                 <option value="<?= $pkg['id'] ?>"><?= htmlspecialchars($pkg['destination']) ?></option>
@@ -94,11 +106,11 @@ try {
 
                     <div class="form-group" style="margin-bottom:0;">
                         <label class="form-label" for="question-text">Your Inquiry / Question</label>
-                        <textarea class="form-control" id="question-text" rows="4" placeholder="Tell us what you would like to know about this package..." required style="resize:vertical;"></textarea>
+                        <textarea class="form-control" id="question-text" name="question_text" rows="4" placeholder="Tell us what you would like to know about this package..." required style="resize:vertical;"></textarea>
                     </div>
 
                     <div>
-                        <button class="btn-cta btn-full btn-loading-action" type="submit" id="btn-submit-inquiry">Send Inquiry</button>
+                        <button class="btn-cta btn-full" type="submit" id="btn-submit-inquiry" onclick="this.innerHTML='Sending...';">Send Inquiry</button>
                     </div>
 
                 </form>
@@ -130,66 +142,5 @@ try {
             &copy; 2026 GlobeTrek Adventures (Pvt) Ltd. All Rights Reserved.
         </div>
     </footer>
-
-    <!-- Scripts -->
-    <script src="js/app.js"></script>
-    <script>
-        document.getElementById('contact-inquiry-form').addEventListener('submit', async (e) => {
-            e.preventDefault();
-            const btn = document.getElementById('btn-submit-inquiry');
-            const pkgSelect = document.getElementById('pkg-select');
-            const questionText = document.getElementById('question-text');
-
-            const packageId = pkgSelect.value;
-            const question = questionText.value.trim();
-
-            if (!packageId) {
-                if (typeof showToast === 'function') {
-                    showToast('Please select a package.', 'warning');
-                }
-                return;
-            }
-
-            if (!question) {
-                if (typeof showToast === 'function') {
-                    showToast('Please type your inquiry first.', 'warning');
-                }
-                return;
-            }
-
-            if (typeof setButtonLoading === 'function') {
-                setButtonLoading(btn, 'Sending...');
-            }
-
-            try {
-                const response = await fetch('api/submit-query.php', {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({ package_id: packageId, question_text: question })
-                });
-                const result = await response.json();
-
-                if (result.success) {
-                    if (typeof showToast === 'function') {
-                        showToast(result.message || 'Inquiry submitted successfully!', 'success');
-                    }
-                    pkgSelect.value = '';
-                    questionText.value = '';
-                } else {
-                    if (typeof showToast === 'function') {
-                        showToast(result.message || 'Failed to submit inquiry.', 'error');
-                    }
-                }
-            } catch (err) {
-                if (typeof showToast === 'function') {
-                    showToast('Network error, please try again.', 'error');
-                }
-            } finally {
-                if (typeof resetButtonLoading === 'function') {
-                    resetButtonLoading(btn);
-                }
-            }
-        });
-    </script>
 </body>
 </html>

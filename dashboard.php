@@ -55,6 +55,18 @@ try {
         </div>
     </header>
 
+    <!-- Alert Notices -->
+    <?php if (isset($_GET['error'])): ?>
+        <div style="background-color: #fed7d7; color: #9b2c2c; padding: 1rem; text-align: center; font-weight: 600; border-bottom: 1px solid #feb2b2;">
+            <?= htmlspecialchars($_GET['error']) ?>
+        </div>
+    <?php endif; ?>
+    <?php if (isset($_GET['success'])): ?>
+        <div style="background-color: #c6f6d5; color: #22543d; padding: 1rem; text-align: center; font-weight: 600; border-bottom: 1px solid #9ae6b4;">
+            <?= htmlspecialchars($_GET['success']) ?>
+        </div>
+    <?php endif; ?>
+
     <!-- Main Workspace Dashboard -->
     <main class="container">
         <h2 class="section-title">My Traveler Space</h2>
@@ -112,8 +124,14 @@ try {
                                     <h4 style="font-size: 1.1rem; color:var(--primary-color); margin-bottom: 0.5rem;"><?= htmlspecialchars($pkg['destination']) ?></h4>
                                     <p style="font-size: 0.85rem; color:var(--text-muted); margin-bottom: 1rem;"><?= number_format($pkg['price'], 2) ?></p>
                                     <div style="display: flex; gap: 0.5rem;">
-                                        <button class="btn-cta" style="padding: 0.5rem 1rem; font-size: 0.8rem;" onclick="bookPackage(<?= $pkg['id'] ?>, this)">Book Now</button>
-                                        <button class="btn-secondary" style="padding: 0.5rem 1rem; font-size: 0.8rem;" onclick="toggleSave(<?= $pkg['id'] ?>, this); document.getElementById('pkg-card-<?= $pkg['id'] ?>').remove();">Remove</button>
+                                        <form method="POST" action="api/book-package.php" style="display: inline;">
+                                            <input type="hidden" name="package_id" value="<?= $pkg['id'] ?>">
+                                            <button class="btn-cta" type="submit" style="padding: 0.5rem 1rem; font-size: 0.8rem;" onclick="this.innerHTML='Booking...';">Book Now</button>
+                                        </form>
+                                        <form method="POST" action="api/toggle-save.php" style="display: inline;">
+                                            <input type="hidden" name="package_id" value="<?= $pkg['id'] ?>">
+                                            <button class="btn-secondary" type="submit" style="padding: 0.5rem 1rem; font-size: 0.8rem;">Remove</button>
+                                        </form>
                                     </div>
                                 </div>
                             </div>
@@ -195,8 +213,5 @@ try {
             &copy; 2026 GlobeTrek Adventures (Pvt) Ltd. All Rights Reserved.
         </div>
     </footer>
-
-    <!-- Scripts -->
-    <script src="js/app.js"></script>
 </body>
 </html>

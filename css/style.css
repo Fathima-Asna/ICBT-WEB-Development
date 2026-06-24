@@ -298,6 +298,8 @@ header {
 
 .package-image-container {
     height: 230px;
+    min-height: 230px;
+    aspect-ratio: 16 / 10;
     position: relative;
     overflow: hidden;
 }

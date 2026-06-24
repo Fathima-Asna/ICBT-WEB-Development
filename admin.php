@@ -67,6 +67,18 @@ try {
         </div>
     </header>
 
+    <!-- Alert Notices -->
+    <?php if (isset($_GET['error'])): ?>
+        <div style="background-color: #fed7d7; color: #9b2c2c; padding: 1rem; text-align: center; font-weight: 600; border-bottom: 1px solid #feb2b2;">
+            <?= htmlspecialchars($_GET['error']) ?>
+        </div>
+    <?php endif; ?>
+    <?php if (isset($_GET['success'])): ?>
+        <div style="background-color: #c6f6d5; color: #22543d; padding: 1rem; text-align: center; font-weight: 600; border-bottom: 1px solid #9ae6b4;">
+            <?= htmlspecialchars($_GET['success']) ?>
+        </div>
+    <?php endif; ?>
+
     <!-- Main Workspace -->
     <main class="container">
         <h2 class="section-title">Administrator System Control Panel</h2>
@@ -124,13 +136,15 @@ try {
                                             </span>
                                         </td>
                                         <td>
-                                            <select class="form-control" style="padding:0.4rem; font-size:0.85rem;" 
-                                                data-original-val="<?= htmlspecialchars($bk['status']) ?>" 
-                                                onchange="updateBookingStatus(<?= $bk['id'] ?>, this)">
-                                                <option value="Pending" <?= $bk['status'] === 'Pending' ? 'selected' : '' ?>>Pending</option>
-                                                <option value="Confirmed" <?= $bk['status'] === 'Confirmed' ? 'selected' : '' ?>>Confirmed</option>
-                                                <option value="Cancelled" <?= $bk['status'] === 'Cancelled' ? 'selected' : '' ?>>Cancelled</option>
-                                            </select>
+                                            <form method="POST" action="api/update-booking-status.php" style="display: flex; gap: 0.25rem;">
+                                                <input type="hidden" name="booking_id" value="<?= $bk['id'] ?>">
+                                                <select class="form-control" name="status" style="padding:0.4rem; font-size:0.85rem; width: auto;" required>
+                                                    <option value="Pending" <?= $bk['status'] === 'Pending' ? 'selected' : '' ?>>Pending</option>
+                                                    <option value="Confirmed" <?= $bk['status'] === 'Confirmed' ? 'selected' : '' ?>>Confirmed</option>
+                                                    <option value="Cancelled" <?= $bk['status'] === 'Cancelled' ? 'selected' : '' ?>>Cancelled</option>
+                                                </select>
+                                                <button class="btn-secondary" type="submit" style="padding:0.35rem 0.6rem; font-size:0.8rem;" onclick="this.innerHTML='...';">Update</button>
+                                            </form>
                                         </td>
                                     </tr>
                                 <?php endforeach; ?>
@@ -168,10 +182,11 @@ try {
                                                 <span style="color:var(--success); font-weight:600">Replied:</span>
                                                 <span style="font-size:0.9rem; color:var(--text-muted);"><?= htmlspecialchars($q['answer_text']) ?></span>
                                             <?php else: ?>
-                                                <div class="reply-group">
-                                                    <input class="form-control reply-input" type="text" placeholder="Type response..." style="padding: 0.5rem; font-size:0.85rem;" required>
-                                                    <button class="btn-cta" style="padding:0.5rem 1rem; font-size:0.8rem;" onclick="replyQuery(<?= $q['id'] ?>, this)">Reply</button>
-                                                </div>
+                                                <form method="POST" action="api/submit-query.php" style="display: flex; gap: 0.25rem; width: 100%;">
+                                                    <input type="hidden" name="query_id" value="<?= $q['id'] ?>">
+                                                    <input class="form-control reply-input" name="answer_text" type="text" placeholder="Type response..." style="padding: 0.5rem; font-size:0.85rem; flex-grow: 1;" required>
+                                                    <button class="btn-cta" type="submit" style="padding:0.5rem 1rem; font-size:0.8rem;" onclick="this.innerHTML='...';">Reply</button>
+                                                </form>
                                             <?php endif; ?>
                                         </td>
                                         <td>
@@ -192,25 +207,25 @@ try {
             <!-- Package Creator Form -->
             <section class="dashboard-section">
                 <h3>Add New Tour Package</h3>
-                <form id="add-package-form" style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 1.5rem; margin-top: 1.5rem; padding: 1.25rem; border: 1px solid var(--border-color); border-radius: var(--border-radius-md); background-color: var(--bg-color);">
+                <form id="add-package-form" method="POST" action="api/add-package.php" style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 1.5rem; margin-top: 1.5rem; padding: 1.25rem; border: 1px solid var(--border-color); border-radius: var(--border-radius-md); background-color: var(--bg-color);">
                     <div class="form-group" style="margin-bottom:0;">
                         <label class="form-label" style="font-size:0.8rem;">Destination Title</label>
-                        <input class="form-control" id="pkg-destination" type="text" placeholder="e.g. Galle Fort Day Tour" required>
+                        <input class="form-control" name="destination" type="text" placeholder="e.g. Galle Fort Day Tour" required>
                     </div>
                     <div class="form-group" style="margin-bottom:0;">
                         <label class="form-label" style="font-size:0.8rem;">Price (USD)</label>
-                        <input class="form-control" id="pkg-price" type="number" step="0.01" placeholder="e.g. 85.00" required>
+                        <input class="form-control" name="price" type="number" step="0.01" placeholder="e.g. 85.00" required>
                     </div>
                     <div class="form-group" style="margin-bottom:0;">
                         <label class="form-label" style="font-size:0.8rem;">Image URL (Optional)</label>
-                        <input class="form-control" id="pkg-image" type="text" placeholder="images/negombo_lagoon.jpg">
+                        <input class="form-control" name="image_url" type="text" placeholder="images/negombo_lagoon.jpg">
                     </div>
                     <div class="form-group" style="grid-column: 1 / -1; margin-bottom:0;">
                         <label class="form-label" style="font-size:0.8rem;">Description</label>
-                        <textarea class="form-control" id="pkg-description" rows="2" placeholder="Describe the tour details..." required></textarea>
+                        <textarea class="form-control" name="description" rows="2" placeholder="Describe the tour details..." required></textarea>
                     </div>
                     <div style="grid-column: 1 / -1; display:flex; justify-content:flex-end;">
-                        <button class="btn-cta" type="submit" id="btn-add-pkg" style="font-size:0.85rem; padding:0.6rem 1.2rem;">Create Package</button>
+                        <button class="btn-cta" type="submit" id="btn-add-pkg" style="font-size:0.85rem; padding:0.6rem 1.2rem;" onclick="this.innerHTML='Creating...';">Create Package</button>
                     </div>
                 </form>
             </section>
@@ -241,23 +256,34 @@ try {
                                     <span>✈️ <?= $bks ?> Bookings</span>
                                 </div>
                             </div>
-                            <div class="editor-form">
-                                <div class="form-group" style="margin-bottom:0;">
-                                    <label class="form-label" style="font-size:0.8rem;">Destination Title</label>
-                                    <input class="form-control edit-dest" type="text" value="<?= htmlspecialchars($pkg['destination']) ?>">
+                            
+                            <form method="POST" action="api/update-package.php">
+                                <input type="hidden" name="package_id" value="<?= $pkg['id'] ?>">
+                                <div class="editor-form">
+                                    <div class="form-group" style="margin-bottom:0;">
+                                        <label class="form-label" style="font-size:0.8rem;">Destination Title</label>
+                                        <input class="form-control edit-dest" name="destination" type="text" value="<?= htmlspecialchars($pkg['destination']) ?>" required>
+                                    </div>
+                                    <div class="form-group" style="margin-bottom:0;">
+                                        <label class="form-label" style="font-size:0.8rem;">Price (USD)</label>
+                                        <input class="form-control edit-price" name="price" type="number" step="0.01" value="<?= htmlspecialchars($pkg['price']) ?>" required>
+                                    </div>
+                                    <div class="form-group" style="grid-column: 1 / -1; margin-bottom:0;">
+                                        <label class="form-label" style="font-size:0.8rem;">Description</label>
+                                        <textarea class="form-control edit-desc" name="description" rows="2" style="resize:vertical;" required><?= htmlspecialchars($pkg['description']) ?></textarea>
+                                    </div>
                                 </div>
-                                <div class="form-group" style="margin-bottom:0;">
-                                    <label class="form-label" style="font-size:0.8rem;">Price (USD)</label>
-                                    <input class="form-control edit-price" type="number" step="0.01" value="<?= htmlspecialchars($pkg['price']) ?>">
+                                <div class="editor-form-footer" style="display:flex; justify-content:space-between; align-items:center; margin-top: 1.5rem;">
+                                    <button class="btn-cta" type="submit" style="font-size:0.85rem; padding:0.6rem 1.2rem;" onclick="this.innerHTML='Saving...';">Save Package Details</button>
                                 </div>
-                                <div class="form-group" style="grid-column: 1 / -1; margin-bottom:0;">
-                                    <label class="form-label" style="font-size:0.8rem;">Description</label>
-                                    <textarea class="form-control edit-desc" rows="2" style="resize:vertical;"><?= htmlspecialchars($pkg['description']) ?></textarea>
-                                </div>
-                            </div>
-                            <div class="editor-form-footer" style="display:flex; justify-content:space-between; align-items:center; margin-top: 1.5rem;">
-                                <button class="btn-secondary" style="padding:0.6rem 1.2rem; font-size:0.85rem; background-color:#fed7d7; color:#9b2c2c; border-color:rgba(229,62,62,0.1);" onclick="deletePackage(<?= $pkg['id'] ?>, this)">Delete Package</button>
-                                <button class="btn-cta" style="font-size:0.85rem; padding:0.6rem 1.2rem;" onclick="savePackageEdit(<?= $pkg['id'] ?>, this)">Save Package Details</button>
+                            </form>
+
+                            <!-- Delete Form next to the Edit form (in separate block so it doesn't nest) -->
+                            <div style="margin-top: 1rem; border-top: 1px dashed var(--border-color); padding-top: 1rem; display: flex; justify-content: flex-start;">
+                                <form method="POST" action="api/delete-package.php" onsubmit="return confirm('Are you sure you want to remove this package from the catalogue? This will delete all queries and bookings associated with it!');">
+                                    <input type="hidden" name="package_id" value="<?= $pkg['id'] ?>">
+                                    <button class="btn-secondary" type="submit" style="padding:0.6rem 1.2rem; font-size:0.85rem; background-color:#fed7d7; color:#9b2c2c; border-color:rgba(229,62,62,0.1);" onclick="this.innerHTML='Deleting...';">Delete Package</button>
+                                </form>
                             </div>
                         </div>
                     <?php endforeach; ?>
@@ -290,8 +316,5 @@ try {
             &copy; 2026 GlobeTrek Adventures (Pvt) Ltd. All Rights Reserved.
         </div>
     </footer>
-
-    <!-- Scripts -->
-    <script src="js/app.js"></script>
 </body>
 </html>

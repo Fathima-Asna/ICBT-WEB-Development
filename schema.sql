@@ -4,6 +4,7 @@ CREATE DATABASE IF NOT EXISTS globetrek_db;
 USE globetrek_db;
 
 -- Drop tables in reverse dependency order to avoid foreign key failures
+DROP TABLE IF EXISTS reviews;
 DROP TABLE IF EXISTS bookings;
 DROP TABLE IF EXISTS queries;
 DROP TABLE IF EXISTS saved_packages;
@@ -62,6 +63,18 @@ CREATE TABLE bookings (
     FOREIGN KEY (package_id) REFERENCES packages(id) ON DELETE CASCADE
 );
 
+-- 6. Reviews and Ratings Table
+CREATE TABLE reviews (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    package_id INT NOT NULL,
+    user_id INT NOT NULL,
+    rating INT NOT NULL CHECK (rating >= 1 AND rating <= 5),
+    comment_text TEXT NOT NULL,
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    FOREIGN KEY (package_id) REFERENCES packages(id) ON DELETE CASCADE,
+    FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE
+);
+
 -- Insert Initial Users (Plaintext for development/testing)
 INSERT INTO users (role, username, password) VALUES
 ('admin', 'admin_globetrek', 'admin123'),
@@ -72,3 +85,8 @@ INSERT INTO packages (id, destination, price, description, likes_count, image_ur
 (1, 'Negombo Lagoon & Canal Boat Safari', 75.00, 'Explore ancient Dutch canals, lush mangrove forests, and fishing villages.', 42, 'images/negombo_lagoon.jpg'),
 (2, 'Sigiriya Rock Fortress & Dambulla Caves', 120.00, 'Historical journey to the sky palace and cave temples.', 128, 'images/sigiriya.jpg'),
 (3, 'Ella Panoramic Train Tour', 95.00, 'Scenic mountain rail journey and the Nine Arch Bridge.', 95, 'images/ella.jpg');
+
+-- Insert Initial Reviews
+INSERT INTO reviews (package_id, user_id, rating, comment_text) VALUES
+(1, 2, 5, 'Amazing safari! Loved the boat ride and the mangroves.'),
+(2, 2, 4, 'Breathtaking views from the top, but climbing was a bit tiring.');

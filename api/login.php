@@ -5,20 +5,29 @@
 session_start();
 require_once '../config/db.php';
 
-header('Content-Type: application/json');
+$is_ajax = (isset($_SERVER['CONTENT_TYPE']) && strpos($_SERVER['CONTENT_TYPE'], 'application/json') !== false) || 
+           (isset($_SERVER['HTTP_ACCEPT']) && strpos($_SERVER['HTTP_ACCEPT'], 'application/json') !== false);
 
-// Get raw JSON body
-$input = json_decode(file_get_contents('php://input'), true);
+if ($is_ajax) {
+    header('Content-Type: application/json');
+    $input = json_decode(file_get_contents('php://input'), true) ?: [];
+} else {
+    $input = $_POST;
+}
 
 $username = isset($input['username']) ? trim($input['username']) : '';
 $password = isset($input['password']) ? trim($input['password']) : '';
 $role     = isset($input['role']) ? trim($input['role']) : '';
 
 if (empty($username) || empty($password) || empty($role)) {
-    echo json_encode([
-        'success' => false,
-        'message' => 'Please fill in all credentials.'
-    ]);
+    if ($is_ajax) {
+        echo json_encode([
+            'success' => false,
+            'message' => 'Please fill in all credentials.'
+        ]);
+    } else {
+        header("Location: ../login.php?error=" . urlencode("Please fill in all credentials."));
+    }
     exit;
 }
 
@@ -42,21 +51,33 @@ try {
             $redirect = 'dashboard.php';
         }
 
-        echo json_encode([
-            'success' => true,
-            'message' => 'Welcome back, ' . htmlspecialchars($user['username']) . '!',
-            'redirect' => $redirect
-        ]);
+        if ($is_ajax) {
+            echo json_encode([
+                'success' => true,
+                'message' => 'Welcome back, ' . htmlspecialchars($user['username']) . '!',
+                'redirect' => $redirect
+            ]);
+        } else {
+            header("Location: ../" . $redirect);
+        }
     } else {
-        echo json_encode([
-            'success' => false,
-            'message' => 'Invalid username, password, or role choice.'
-        ]);
+        if ($is_ajax) {
+            echo json_encode([
+                'success' => false,
+                'message' => 'Invalid username, password, or role choice.'
+            ]);
+        } else {
+            header("Location: ../login.php?error=" . urlencode("Invalid username, password, or role choice."));
+        }
     }
 } catch (\PDOException $e) {
-    echo json_encode([
-        'success' => false,
-        'message' => 'Authentication failed: ' . $e->getMessage()
-    ]);
+    if ($is_ajax) {
+        echo json_encode([
+            'success' => false,
+            'message' => 'Authentication failed: ' . $e->getMessage()
+        ]);
+    } else {
+        header("Location: ../login.php?error=" . urlencode('Authentication failed: ' . $e->getMessage()));
+    }
 }
 ?>

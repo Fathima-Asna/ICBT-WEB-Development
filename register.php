@@ -15,7 +15,7 @@ if (isset($_SESSION['role'])) {
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Login - GlobeTrek Adventures</title>
+    <title>Sign Up - GlobeTrek Adventures</title>
     <link rel="stylesheet" href="css/style.css">
 </head>
 <body>
@@ -37,8 +37,8 @@ if (isset($_SESSION['role'])) {
     <div class="auth-wrapper">
         <div class="auth-card">
             <div class="auth-header">
-                <h2>Welcome Back</h2>
-                <p>Sign in to access your tour space</p>
+                <h2>Create Account</h2>
+                <p>Register as a Traveler to explore and book packages</p>
             </div>
 
             <?php if (isset($_GET['error'])): ?>
@@ -46,36 +46,28 @@ if (isset($_SESSION['role'])) {
                     <?= htmlspecialchars($_GET['error']) ?>
                 </div>
             <?php endif; ?>
-            <?php if (isset($_GET['success'])): ?>
-                <div style="background-color: #c6f6d5; color: #22543d; padding: 0.75rem 1rem; border-radius: var(--border-radius-md); margin-bottom: 1.5rem; font-size: 0.9rem; text-align: center; border: 1px solid #9ae6b4;">
-                    <?= htmlspecialchars($_GET['success']) ?>
-                </div>
-            <?php endif; ?>
             
-            <form id="login-form" method="POST" action="api/login.php">
-                <div class="form-group">
-                    <label class="form-label" for="role">Select Your Role</label>
-                    <select class="form-control" id="role" name="role" required>
-                        <option value="customer">Traveler (Customer)</option>
-                        <option value="admin">Administrator</option>
-                    </select>
-                </div>
-
+            <form id="register-form" method="POST" action="api/register.php" onsubmit="if (this.password.value !== this['confirm-password'].value) { alert('Passwords do not match.'); return false; } document.getElementById('btn-register').innerHTML='Creating Account...';">
                 <div class="form-group">
                     <label class="form-label" for="username">Username</label>
-                    <input class="form-control" type="text" id="username" name="username" placeholder="e.g. traveler_srilanka" required>
+                    <input class="form-control" type="text" id="username" name="username" placeholder="Choose a username" required>
                 </div>
 
                 <div class="form-group">
                     <label class="form-label" for="password">Password</label>
-                    <input class="form-control" type="password" id="password" name="password" placeholder="••••••••" required>
+                    <input class="form-control" type="password" id="password" name="password" placeholder="Choose a strong password" required>
                 </div>
 
-                <button class="btn-cta btn-full" type="submit" id="btn-login" onclick="this.innerHTML='Signing In...';">Sign In</button>
+                <div class="form-group">
+                    <label class="form-label" for="confirm-password">Confirm Password</label>
+                    <input class="form-control" type="password" id="confirm-password" name="confirm-password" placeholder="Repeat your password" required>
+                </div>
+
+                <button class="btn-cta btn-full" type="submit" id="btn-register">Sign Up</button>
             </form>
             <div style="margin-top: 1.5rem; text-align: center; font-size: 0.9rem;">
-                <span style="color: var(--text-muted);">Don't have an account? </span>
-                <a href="register.php" style="color: var(--primary-color); font-weight: 600; text-decoration: underline;">Sign Up</a>
+                <span style="color: var(--text-muted);">Already have an account? </span>
+                <a href="login.php" style="color: var(--primary-color); font-weight: 600; text-decoration: underline;">Sign In</a>
             </div>
         </div>
     </div>

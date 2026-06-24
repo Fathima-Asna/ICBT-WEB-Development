@@ -15,6 +15,7 @@ graph TD
     Home --> Packages[packages.php - Search Catalog]
     Home --> Contact[contact.php - FAQ Inquiries]
     Home --> Login[login.php - Role-based Sign In]
+    Login --> Register[register.php - Customer Registration]
 
     %% User Roles routing
     Login --> AuthCustomer{Customer Session?}
@@ -44,6 +45,7 @@ html_asna/
 │
 ├── api/                        # Asynchronous AJAX endpoints returning JSON
 │   ├── login.php               # Processes auth and establishes PHP session
+│   ├── register.php            # Registers a new customer account
 │   ├── toggle-like.php         # Increments package likes dynamically
 │   ├── toggle-save.php         # Toggles package bookmarks (Saved Packages)
 │   ├── book-package.php        # Logs a new customer booking
@@ -67,6 +69,7 @@ html_asna/
 ├── packages.php                # Dedicated search and packages browsing page
 ├── contact.php                 # Dedicated contact details and Q&A inquiry forms
 ├── login.php                   # Secure credentials portal with role selection
+├── register.php                # Customer account registration form
 ├── logout.php                  # Destroys session variables and redirects
 ├── dashboard.php               # Customer Dashboard (My bookings, bookmarks, and queries status)
 ├── admin.php                   # Administrator Dashboard
